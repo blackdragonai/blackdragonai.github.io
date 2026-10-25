@@ -186,9 +186,9 @@
     <h2 class="section-title">Your clips</h2>
     <div id="jobs"><p class="hint">Nothing yet — your generations will land here.</p></div>
 
-    <!-- AI Chat (DeepSeek) -->
+    <!-- AI Chat (OpenRouter free models + DeepSeek) -->
     <div id="chat-section">
-      <h2 class="section-title">AI Chat — DeepSeek</h2>
+      <h2 class="section-title">AI Chat — Free AI Models</h2>
       <div class="card">
         <p class="muted" style="margin-top:0;">Stuck on a prompt? Ask the Black Dragon assistant — it sharpens rough ideas into ready-to-paste video prompts for the Cheap Zone and Premium Zone, and answers questions about plans and credits.</p>
         <div id="chat-messages">
@@ -198,8 +198,29 @@
           <div class="chat-model-wrap">
             <label for="chat-model">Model</label>
             <select id="chat-model">
-              <option value="deepseek-chat">DeepSeek Chat</option>
-              <option value="deepseek-reasoner">DeepSeek Reasoner</option>
+              <optgroup label="Free models (OpenRouter)">
+                <option value="openrouter/free" selected>Free Models Router (auto-picks a free model)</option>
+                <option value="google/gemma-4-31b-it:free">Google Gemma 4 31B (free)</option>
+                <option value="google/gemma-4-26b-a4b-it:free">Google Gemma 4 26B (free)</option>
+                <option value="nvidia/nemotron-3-ultra-550b-a55b:free">NVIDIA Nemotron 3 Ultra (free)</option>
+                <option value="nvidia/nemotron-3-super-120b-a12b:free">NVIDIA Nemotron 3 Super (free)</option>
+                <option value="nvidia/nemotron-3.5-super-vl:free">NVIDIA Nemotron 3.5 Super VL (free)</option>
+                <option value="nvidia/nemotron-3.5-lightning:free">NVIDIA Nemotron 3.5 Lightning (free)</option>
+                <option value="nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free">NVIDIA Nemotron 3 Nano Omni (free)</option>
+                <option value="thinkingmachines/inkling:free">Thinking Machines Inkling (free)</option>
+                <option value="thinkingmachines/inkling-small:free">Thinking Machines Inkling Small (free)</option>
+                <option value="poolside/laguna-s-2.1:free">Poolside Laguna S 2.1 (free)</option>
+                <option value="poolside/laguna-xs-2.1:free">Poolside Laguna XS 2.1 (free)</option>
+                <option value="cohere/north-mini-code:free">Cohere North Mini Code (free)</option>
+                <option value="recursive/flint-v1.0:free">Recursive Flint (free)</option>
+                <option value="xingchen-agi/xing4.0-29b-a4b:free">XingChen Xing4.0 29B (free)</option>
+                <option value="dots-studio/dots-3-note-preview:free">Dots Studio Dots3-Note Preview (free)</option>
+                <option value="liquid/lfm-2.5-2.6b:free">LiquidAI LFM2.5-2.6B (free)</option>
+              </optgroup>
+              <optgroup label="DeepSeek">
+                <option value="deepseek-chat">DeepSeek Chat</option>
+                <option value="deepseek-reasoner">DeepSeek Reasoner</option>
+              </optgroup>
             </select>
           </div>
           <div class="chat-input-wrap">
@@ -209,7 +230,7 @@
         </div>
         <p class="form-error" id="chat-error"></p>
         <button class="btn btn-gold" id="chat-send" type="button" style="width:100%;">Send</button>
-        <p class="hint center">Chat runs on DeepSeek, separate from the video engines — it writes words, not clips.</p>
+        <p class="hint center">Free models run on OpenRouter at $0 — they carry daily limits, so if one stalls, pick another. DeepSeek runs on the studio's DeepSeek balance. Chat writes words, not clips — video generation is the zones above.</p>
       </div>
     </div>
 
