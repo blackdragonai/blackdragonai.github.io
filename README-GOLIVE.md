@@ -1,5 +1,8 @@
 # BLACK DRAGON AI — go-live checklist
 
+> MOVED 2026-10-25: the app now lives in its OWN GitHub home — org **blackdragonai**, repo **blackdragonai.github.io**, live at **https://blackdragonai.github.io/**. The old moneymotionstudios.github.io/black-dragon-ai address is retired. Pushes go to owner `blackdragonai`, repo `blackdragonai.github.io`. The backend is unchanged: same shared Supabase project (money-motion-studios), same owner account, same fal.ai balance.
+> v2.1 (2026-10-25): public product — open accounts, credits + packs, monthly plans ($50/$100/$200), 25 free Wan generations weekly, owner panel. Backend: bd_profiles / bd_orders / bd_pricing tables + bd-generate / bd-status / bd-credits functions. See supabase/schema-credits.sql and supabase/schema-plans.sql.
+
 Built 2026-10-24. Everything below runs on the SAME accounts as the Money Motion app.
 
 ## What exists
