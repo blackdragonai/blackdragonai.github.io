@@ -360,6 +360,48 @@
     }
   });
 
+  // ---------- ai chat (DeepSeek, via bd-chat) ----------
+  const chatHistory = [];
+  const chatBox = document.getElementById("chat-messages");
+  function appendChat(role, text) {
+    const div = document.createElement("div");
+    div.className = "chat-msg " + role;
+    div.textContent = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    return div;
+  }
+  document.getElementById("chat-send").addEventListener("click", async function () {
+    const errEl = document.getElementById("chat-error");
+    errEl.textContent = "";
+    const input = document.getElementById("chat-input");
+    const text = input.value.trim();
+    if (!text) { errEl.textContent = "Write a message first."; return; }
+    chatHistory.push({ role: "user", content: text });
+    while (chatHistory.length > 20) chatHistory.shift();
+    const userBubble = appendChat("user", text);
+    input.value = "";
+    const btn = this;
+    btn.disabled = true; btn.textContent = "Thinking...";
+    try {
+      const out = await callFn("bd-chat", {
+        messages: chatHistory.slice(),
+        model: document.getElementById("chat-model").value
+      });
+      chatHistory.push({ role: "assistant", content: out.reply });
+      appendChat("assistant", out.reply);
+    } catch (ex) {
+      // No reply came back (e.g. chat not live yet): drop the failed turn
+      // from the history AND from the panel, so what the user sees always
+      // matches what will be re-sent, and say it plainly in the panel.
+      chatHistory.pop();
+      if (userBubble) userBubble.remove();
+      appendChat("system", ex.message);
+    } finally {
+      btn.disabled = false; btn.textContent = "Send";
+    }
+  });
+
   // ---------- jobs ----------
   let jobsCache = [];
   async function loadJobs() {

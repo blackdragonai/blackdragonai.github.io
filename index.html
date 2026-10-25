@@ -16,6 +16,9 @@
 <meta property="og:description" content="Type what you want to see — it renders a cinematic AI video clip. 7-day free trial, then monthly plans.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://blackdragonai.github.io/">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"BLACK DRAGON AI — Video Studio","url":"https://blackdragonai.github.io/","applicationCategory":"MultimediaApplication","operatingSystem":"Web browser","publisher":{"@type":"Organization","name":"Black Dragon Films LLC"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"7-day free trial with 25 free generations; monthly plans $50-$200 and credit packs from $10."},"description":"AI video studio: type a prompt, get a cinematic video clip. Cheap Zone (Wan) and Premium Zone (Seedance 2.5)."}
+</script>
 <link rel="stylesheet" href="css/style.css">
 <style>
   .head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
@@ -40,6 +43,14 @@
   .steps{margin:8px 0;padding-left:20px}
   .steps li{margin:6px 0}
   .ex-label{font-weight:700;color:#f5d76e;margin-top:12px}
+  #chat-messages{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;margin:10px 0}
+  .chat-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+  .chat-msg.user{align-self:flex-end;background:#26262e;border:1px solid #3a3a44;color:#f2f2f4}
+  .chat-msg.assistant{align-self:flex-start;background:#111;border:1px solid #333;color:#e8e8ee}
+  .chat-msg.system{align-self:center;background:#3f3003;border:1px solid #d4af37;color:#f5d76e;text-align:center;max-width:100%}
+  .chat-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+  .chat-controls .chat-model-wrap{flex:0 1 220px}
+  .chat-controls .chat-input-wrap{flex:1 1 260px}
 </style>
 </head>
 <body>
@@ -174,6 +185,33 @@
 
     <h2 class="section-title">Your clips</h2>
     <div id="jobs"><p class="hint">Nothing yet — your generations will land here.</p></div>
+
+    <!-- AI Chat (DeepSeek) -->
+    <div id="chat-section">
+      <h2 class="section-title">AI Chat — DeepSeek</h2>
+      <div class="card">
+        <p class="muted" style="margin-top:0;">Stuck on a prompt? Ask the Black Dragon assistant — it sharpens rough ideas into ready-to-paste video prompts for the Cheap Zone and Premium Zone, and answers questions about plans and credits.</p>
+        <div id="chat-messages">
+          <div class="chat-msg assistant">🐉 Tell me the clip you're picturing — subject, vibe, anything — and I'll turn it into a prompt you can paste straight into the generator above.</div>
+        </div>
+        <div class="chat-controls">
+          <div class="chat-model-wrap">
+            <label for="chat-model">Model</label>
+            <select id="chat-model">
+              <option value="deepseek-chat">DeepSeek Chat</option>
+              <option value="deepseek-reasoner">DeepSeek Reasoner</option>
+            </select>
+          </div>
+          <div class="chat-input-wrap">
+            <label for="chat-input">Message</label>
+            <textarea id="chat-input" rows="3" maxlength="4000" placeholder="Example: a dragon flying over Brooklyn at night, make it cinematic"></textarea>
+          </div>
+        </div>
+        <p class="form-error" id="chat-error"></p>
+        <button class="btn btn-gold" id="chat-send" type="button" style="width:100%;">Send</button>
+        <p class="hint center">Chat runs on DeepSeek, separate from the video engines — it writes words, not clips.</p>
+      </div>
+    </div>
 
     <!-- Owner panel -->
     <div id="owner-panel" class="hidden">
