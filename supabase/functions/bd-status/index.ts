@@ -1,5 +1,7 @@
-// BLACK DRAGON AI - bd-status
-// Owner-only. Checks fal.ai for one job; when finished, saves the video URL.
+// BLACK DRAGON AI - bd-status (v2, credits)
+// The job's owner (or the app owner) polls one job. Checks fal.ai; when
+// finished, saves the video URL. If the job ends in error after credits
+// were charged, the charge is refunded exactly once.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const OWNER_EMAIL = "littmobstudios@gmail.com";
@@ -23,16 +25,38 @@ Deno.serve(async (req) => {
     const authHeader = req.headers.get("Authorization") || "";
     const userClient = createClient(SUPABASE_URL, ANON, { global: { headers: { Authorization: authHeader } } });
     const { data: userData, error: userErr } = await userClient.auth.getUser();
-    if (userErr || !userData.user || userData.user.email !== OWNER_EMAIL) {
-      return json({ error: "Owner only." }, 403);
-    }
+    if (userErr || !userData.user) return json({ error: "Sign in first." }, 401);
+    const caller = userData.user;
 
     const { job_id } = await req.json();
     const admin = createClient(SUPABASE_URL, SERVICE);
     const { data: job, error: jobErr } = await admin.from("bd_jobs").select("*").eq("id", job_id).single();
     if (jobErr || !job) return json({ error: "Job not found." }, 404);
+    if (caller.email !== OWNER_EMAIL && job.user_id !== caller.id) {
+      return json({ error: "Not your job." }, 403);
+    }
     if (job.status === "done" || job.status === "error") return json({ job });
     if (!job.fal_status_url) return json({ job });
+
+    // mark error + refund the charge exactly once
+    const failWithRefund = async (msg: string) => {
+      await admin.from("bd_jobs")
+        .update({ status: "error", error: msg, refunded: job.credits_charged > 0 ? true : job.refunded })
+        .eq("id", job.id);
+      job.status = "error"; job.error = msg;
+      if (job.credits_charged > 0 && !job.refunded && job.user_id) {
+        const { data: prof } = await admin.from("bd_profiles").select("credits").eq("user_id", job.user_id).single();
+        if (prof) await admin.from("bd_profiles").update({ credits: prof.credits + job.credits_charged }).eq("user_id", job.user_id);
+        job.refunded = true;
+      }
+      if (job.free_gen && job.user_id) {
+        // give the weekly free generation back too (this runs once,
+        // on the transition into error)
+        const { data: prof2 } = await admin.from("bd_profiles").select("free_gens_used").eq("user_id", job.user_id).single();
+        if (prof2) await admin.from("bd_profiles").update({ free_gens_used: Math.max(0, prof2.free_gens_used - 1) }).eq("user_id", job.user_id);
+      }
+      return json({ job });
+    };
 
     const st = await fetch(job.fal_status_url, { headers: { "Authorization": `Key ${FAL_KEY}` } });
     const stJson = await st.json().catch(() => ({}));
@@ -52,17 +76,13 @@ Deno.serve(async (req) => {
       if (videoUrl) {
         await admin.from("bd_jobs").update({ status: "done", video_url: videoUrl }).eq("id", job.id);
         job.status = "done"; job.video_url = videoUrl;
-      } else {
-        const detail = resJson?.detail || resJson?.error || ("HTTP " + res.status);
-        const msg = "fal finished without a video: " + (typeof detail === "string" ? detail : JSON.stringify(detail)).slice(0, 300);
-        await admin.from("bd_jobs").update({ status: "error", error: msg }).eq("id", job.id);
-        job.status = "error"; job.error = msg;
+        return json({ job });
       }
-      return json({ job });
+      const detail = resJson?.detail || resJson?.error || ("HTTP " + res.status);
+      const msg = "fal finished without a video: " + (typeof detail === "string" ? detail : JSON.stringify(detail)).slice(0, 300);
+      return await failWithRefund(msg + (job.credits_charged > 0 ? " Credits refunded." : ""));
     }
-    await admin.from("bd_jobs").update({ status: "error", error: "fal status: " + s }).eq("id", job.id);
-    job.status = "error"; job.error = "fal status: " + s;
-    return json({ job });
+    return await failWithRefund("fal status: " + s + (job.credits_charged > 0 ? " Credits refunded." : ""));
   } catch (e) {
     return json({ error: String(e) }, 500);
   }

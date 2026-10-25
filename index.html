@@ -11,8 +11,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLACK DRAGON AI — Video Studio</title>
-<meta name="description" content="BLACK DRAGON AI by Black Dragon Films LLC. Cinematic AI video: cheap-zone volume clips and Seedance 2.5 premium.">
+<meta name="description" content="BLACK DRAGON AI by Black Dragon Films LLC. Cinematic AI video on credits: cheap-zone volume clips and Seedance 2.5 premium.">
 <link rel="stylesheet" href="css/style.css">
+<style>
+  .head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .chip{background:#1a1a1a;border:1px solid #d4af37;color:#f5d76e;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px;white-space:nowrap}
+  .pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
+  .pack-card{background:#111;border:1px solid #333;border-radius:12px;padding:14px;text-align:center}
+  .pack-card .pack-name{color:#f5d76e;font-weight:700;letter-spacing:1px}
+  .pack-card .pack-credits{font-size:26px;font-weight:800;margin:4px 0}
+  .pack-card .pack-usd{color:#aaa;margin-bottom:10px}
+  .tbl{width:100%;border-collapse:collapse;font-size:14px}
+  .tbl td,.tbl th{padding:6px 4px;border-bottom:1px solid #222;text-align:left;vertical-align:middle}
+  .tbl input[type=number]{width:76px}
+  .order-code{font-size:24px;font-weight:800;letter-spacing:2px;color:#f5d76e}
+  .pay-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+  .status-chip{border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;background:#222;color:#ccc;text-transform:uppercase}
+  .status-chip.credited{background:#14532d;color:#86efac}
+  .status-chip.pending{background:#3f3003;color:#f5d76e}
+  .status-chip.cancelled{background:#450a0a;color:#fca5a5}
+  .linklike{background:none;border:none;color:#f5d76e;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
+  .cost-line{font-weight:700;margin:8px 0}
+</style>
 </head>
 <body>
 
@@ -24,21 +44,30 @@
       <div class="brand-sub">AI VIDEO STUDIO · BLACK DRAGON FILMS LLC</div>
     </div>
   </div>
-  <button class="btn btn-ghost btn-small hidden" id="signout-btn" type="button">Sign Out</button>
+  <div class="head-actions">
+    <span class="chip hidden" id="free-chip">🎁 0 free</span>
+    <span class="chip hidden" id="balance-chip">⚡ 0 credits</span>
+    <button class="btn btn-gold btn-small hidden" id="buy-btn" type="button">Buy Credits</button>
+    <button class="btn btn-ghost btn-small hidden" id="signout-btn" type="button">Sign Out</button>
+  </div>
 </header>
 
 <main class="wrap">
 
-  <!-- Login gate (owner only) -->
-  <form class="card form-card" id="login-form">
-    <h3 style="margin-top:0;">Owner sign in</h3>
-    <p class="muted">This studio runs on the owner's generation balance, so it's locked to the owner account.</p>
-    <label for="login-email">Email</label>
-    <input id="login-email" type="email" autocomplete="username">
-    <label for="login-password">Password</label>
-    <input id="login-password" type="password" autocomplete="current-password">
-    <p class="form-error" id="login-error"></p>
-    <button class="btn btn-gold" type="submit" style="width:100%;">Sign In</button>
+  <!-- Auth: sign in or create an account -->
+  <form class="card form-card" id="auth-form">
+    <h3 style="margin-top:0;" id="auth-title">Sign in</h3>
+    <p class="muted" id="auth-sub">Welcome back. Your clips and credits live on your account.</p>
+    <label for="auth-email">Email</label>
+    <input id="auth-email" type="email" autocomplete="username">
+    <label for="auth-password">Password</label>
+    <input id="auth-password" type="password" autocomplete="current-password">
+    <p class="form-error" id="auth-error"></p>
+    <button class="btn btn-gold" type="submit" style="width:100%;" id="auth-submit">Sign In</button>
+    <p class="center" style="margin-bottom:0;">
+      <button class="linklike" type="button" id="auth-toggle">New here? Create an account</button>
+    </p>
+    <p class="hint center" id="auth-rates">Loading prices…</p>
   </form>
 
   <!-- Studio -->
@@ -71,20 +100,69 @@
       </div>
       <label for="image-url">Reference image URL <span class="muted">(optional — Seedance only: the clip starts from this image)</span></label>
       <input id="image-url" type="url" placeholder="https://…">
+      <p class="cost-line" id="cost-line"></p>
       <p class="form-error" id="gen-error"></p>
       <button class="btn btn-gold" id="generate-btn" type="button" style="width:100%;">Generate</button>
       <p class="hint center" id="gen-note"></p>
     </div>
 
+    <!-- Buy credits -->
+    <div id="buy-section">
+      <h2 class="section-title">Plans &amp; credits</h2>
+      <div class="card">
+        <p id="plan-line" style="margin-top:0;">Your plan: <strong>Free</strong></p>
+        <h3 style="margin-bottom:4px;">Monthly plans</h3>
+        <div class="pack-grid" id="plan-grid"></div>
+        <p class="hint">Every account — free or paid — also gets <strong id="free-allowance-note">25 free generations a week</strong> in the Cheap Zone. Plans drop their credits monthly. Pay the same way as packs (code in the note); your plan switches on when the payment is confirmed. Renew each month by paying again — no card on file, nothing auto-charges.</p>
+        <h3 style="margin-bottom:4px;">Credit packs (one-time)</h3>
+        <div class="pack-grid" id="pack-grid"></div>
+        <div id="order-panel" class="hidden">
+          <p>Your order code — <strong>put it in the payment note</strong> so your credits land on the right account:</p>
+          <p class="order-code" id="order-code">BD-XXXXXX</p>
+          <p>Amount due: <strong id="order-amount">$0</strong> · You get: <strong id="order-credits">0 credits</strong></p>
+          <div class="pay-row">
+            <a class="btn btn-gold" id="pay-cashapp" href="#" target="_blank" rel="noopener">Pay with Cash App</a>
+            <a class="btn btn-ghost" id="pay-venmo" href="#" target="_blank" rel="noopener">Pay with Venmo</a>
+          </div>
+          <p class="muted">Chime: send to <strong id="pay-chime-note">$Johnnie-Gannaway</strong> with the same order code in the note.</p>
+          <p class="hint">Credits land as soon as your payment is confirmed — usually quick. Your balance up top updates on its own.</p>
+        </div>
+        <h3 style="margin-bottom:4px;">My orders</h3>
+        <div id="my-orders"><p class="hint">No orders yet.</p></div>
+      </div>
+    </div>
+
     <h2 class="section-title">Your clips</h2>
     <div id="jobs"><p class="hint">Nothing yet — your generations will land here.</p></div>
+
+    <!-- Owner panel -->
+    <div id="owner-panel" class="hidden">
+      <h2 class="section-title">Owner panel</h2>
+      <div class="card">
+        <h3 style="margin-top:0;">Pending orders</h3>
+        <div id="owner-orders"><p class="hint">None waiting.</p></div>
+        <h3>Users &amp; balances</h3>
+        <div id="owner-users"><p class="hint">Loading…</p></div>
+        <h3>Prices (credits per second)</h3>
+        <table class="tbl">
+          <tr><td>Wan 720p</td><td><input type="number" id="price-wan720" min="1"></td>
+              <td>Wan 1080p</td><td><input type="number" id="price-wan1080" min="1"></td></tr>
+          <tr><td>Seedance 480p</td><td><input type="number" id="price-seed480" min="1"></td>
+              <td>Seedance 720p</td><td><input type="number" id="price-seed720" min="1"></td></tr>
+          <tr><td>Free gens / week</td><td><input type="number" id="price-freegens" min="0"></td>
+              <td>Free max seconds</td><td><input type="number" id="price-freemax" min="1"></td></tr>
+        </table>
+        <p class="form-error" id="price-msg"></p>
+        <button class="btn btn-gold" id="price-save" type="button">Save prices</button>
+      </div>
+    </div>
   </div>
 
 </main>
 
 <footer>
-  BLACK DRAGON AI · a Black Dragon Films LLC studio tool<br>
-  Cheap Zone volume + Seedance 2.5 premium. Keys stay in the back — the balance is the owner's.
+  BLACK DRAGON AI · a Black Dragon Films LLC studio<br>
+  Cheap Zone volume + Seedance 2.5 premium. Pay per clip with credits — no subscription.
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>

@@ -20,7 +20,7 @@ window.BD_CONFIG = {
       name: "Seedance 2.5",
       zone: "PREMIUM ZONE",
       blurb: "ByteDance's cinematic model. Up to 30 seconds, native audio, reference images/video/audio.",
-      priceNote: "~$0.10-$0.47 / second at 720p",
+      priceNote: "Premium rate - credits per second",
       durations: [5, 10, 15, 30],
       resolutions: ["480p", "720p"]
     },
