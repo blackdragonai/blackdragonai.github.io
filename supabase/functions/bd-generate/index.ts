@@ -38,19 +38,27 @@ Deno.serve(async (req) => {
     const aspect = ["16:9", "9:16", "1:1", "4:3", "3:4"].includes(body.aspect_ratio) ? body.aspect_ratio : "16:9";
     const imageUrl = body.image_url ? String(body.image_url) : null;
 
-    // fal endpoint ids - verified against fal's published docs 2026-10-24;
+    // fal endpoint ids - verified against fal's published docs/openapi 2026-10-24;
     // override via secrets if fal renames them.
+    // Inputs are built per model: sending fields a model does not accept
+    // (e.g. generate_audio or a 480p resolution to Wan 2.7, whose resolution
+    // enum is only 720p/1080p and duration 2-15s) makes the queued job fail
+    // at runtime with no video - learned from the first live test.
     let falId: string;
-    const input: Record<string, unknown> = {
-      prompt, duration, resolution, aspect_ratio: aspect, generate_audio: true,
-    };
+    const input: Record<string, unknown> = { prompt, aspect_ratio: aspect };
     if (model === "seedance") {
       const base = Deno.env.get("FAL_MODEL_SEEDANCE") || "bytedance/seedance-2.5/text-to-video";
       falId = imageUrl ? base.replace("text-to-video", "image-to-video") : base;
+      input.duration = duration;
+      input.resolution = resolution === "1080p" ? "720p" : resolution;
+      input.generate_audio = true;
       if (imageUrl) input.image_url = imageUrl;
     } else if (model === "wan") {
       falId = Deno.env.get("FAL_MODEL_WAN") || "fal-ai/wan/v2.7/text-to-video";
-      // v1: the Wan text-to-video endpoint takes no image; image-led clips go to Seedance.
+      input.duration = Math.max(2, Math.min(15, duration));
+      input.resolution = resolution === "1080p" ? "1080p" : "720p";
+      // the Wan text-to-video endpoint takes no image and no generate_audio;
+      // image-led clips go to Seedance.
     } else {
       return json({ error: "Unknown model." }, 400);
     }

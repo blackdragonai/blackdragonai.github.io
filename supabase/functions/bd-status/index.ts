@@ -53,8 +53,10 @@ Deno.serve(async (req) => {
         await admin.from("bd_jobs").update({ status: "done", video_url: videoUrl }).eq("id", job.id);
         job.status = "done"; job.video_url = videoUrl;
       } else {
-        await admin.from("bd_jobs").update({ status: "error", error: "Finished but no video URL came back." }).eq("id", job.id);
-        job.status = "error"; job.error = "Finished but no video URL came back.";
+        const detail = resJson?.detail || resJson?.error || ("HTTP " + res.status);
+        const msg = "fal finished without a video: " + (typeof detail === "string" ? detail : JSON.stringify(detail)).slice(0, 300);
+        await admin.from("bd_jobs").update({ status: "error", error: msg }).eq("id", job.id);
+        job.status = "error"; job.error = msg;
       }
       return json({ job });
     }

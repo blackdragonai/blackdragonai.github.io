@@ -10,10 +10,10 @@ window.BD_CONFIG = {
       id: "wan",
       name: "Wan 3.0",
       zone: "CHEAP ZONE",
-      blurb: "Fast, low-cost clips with sound. The workhorse - start here.",
-      priceNote: "from ~$0.04 / second",
-      durations: [5, 10, 15, 30],
-      resolutions: ["480p", "720p", "1080p"]
+      blurb: "Fast, low-cost clips. The workhorse - start here.",
+      priceNote: "Low per-second rate - cheapest zone",
+      durations: [5, 10, 15],
+      resolutions: ["720p", "1080p"]
     },
     {
       id: "seedance",
