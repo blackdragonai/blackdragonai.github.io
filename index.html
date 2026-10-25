@@ -62,11 +62,11 @@
   <div id="showcase">
     <div class="card">
       <h3 style="margin-top:0;">What is Black Dragon AI?</h3>
-      <p>An AI video studio. <strong>Type what you want to see — it renders a cinematic video clip.</strong> Two engines: a <strong>free AI</strong> for your weekly free generations, and a <strong>premium AI</strong> (Seedance 2.5) for hero shots — up to 30 seconds, native sound, even starting from your own photo. A Black Dragon Films LLC studio.</p>
+      <p>An AI video studio. <strong>Type what you want to see — it renders a cinematic video clip.</strong> Two engines: a <strong>free AI</strong> for your 7-day free trial, and a <strong>premium AI</strong> (Seedance 2.5) for hero shots — up to 30 seconds, native sound, even starting from your own photo. A Black Dragon Films LLC studio.</p>
       <ol class="steps">
         <li><strong>Create a free account</strong> — email + password, you're in instantly.</li>
-        <li><strong>Generate</strong> — you get <strong id="pub-free-note">25 free generations every week</strong>. Write a prompt, pick the length and shape, hit Generate.</li>
-        <li><strong>Go further</strong> — grab a credit pack or a monthly plan, pay with Cash App / Venmo / Chime, credits land on your account.</li>
+        <li><strong>Generate</strong> — you get a <strong>7-day free trial: <span id="pub-free-note">25 free generations in a 7-day free trial</span></strong>. Write a prompt, pick the length and shape, hit Generate.</li>
+        <li><strong>Like it? Pay monthly</strong> — pick a monthly plan or a credit pack, pay with Cash App / Venmo / Chime, credits land on your account.</li>
       </ol>
     </div>
 
@@ -149,7 +149,7 @@
         <p id="plan-line" style="margin-top:0;">Your plan: <strong>Free</strong></p>
         <h3 style="margin-bottom:4px;">Monthly plans</h3>
         <div class="pack-grid" id="plan-grid"></div>
-        <p class="hint">Every account — free or paid — also gets <strong id="free-allowance-note">25 free generations a week</strong> in the Cheap Zone. Plans drop their credits monthly. Pay the same way as packs (code in the note); your plan switches on when the payment is confirmed. Renew each month by paying again — no card on file, nothing auto-charges.</p>
+        <p class="hint">Every new account starts with a <strong>7-day free trial</strong> — <strong id="free-allowance-note">25 free generations in your 7-day free trial</strong> in the Cheap Zone. When the trial ends, free generations stop — like it, pick a monthly plan. Plans drop their credits monthly. Pay the same way as packs (code in the note); your plan switches on when the payment is confirmed. Renew each month by paying again — no card on file, nothing auto-charges.</p>
         <h3 style="margin-bottom:4px;">Credit packs (one-time)</h3>
         <div class="pack-grid" id="pack-grid"></div>
         <div id="order-panel" class="hidden">
@@ -185,7 +185,7 @@
               <td>Wan 1080p</td><td><input type="number" id="price-wan1080" min="1"></td></tr>
           <tr><td>Seedance 480p</td><td><input type="number" id="price-seed480" min="1"></td>
               <td>Seedance 720p</td><td><input type="number" id="price-seed720" min="1"></td></tr>
-          <tr><td>Free gens / week</td><td><input type="number" id="price-freegens" min="0"></td>
+          <tr><td>Free trial gens</td><td><input type="number" id="price-freegens" min="0"></td>
               <td>Free max seconds</td><td><input type="number" id="price-freemax" min="1"></td></tr>
         </table>
         <p class="form-error" id="price-msg"></p>

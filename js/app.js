@@ -39,9 +39,9 @@
     pricing = data;
     freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 25;
     document.getElementById("auth-rates").textContent =
-      freePerWeek + " free generations every week · Plans $50-$200/mo · Packs from $10 · Wan " + pricing.wan_720_per_sec + " credits/sec";
+      freePerWeek + " free generations in a 7-day free trial · Plans $50-$200/mo · Packs from $10 · Wan " + pricing.wan_720_per_sec + " credits/sec";
     document.getElementById("free-allowance-note").textContent =
-      freePerWeek + " free generations a week (Cheap Zone, up to " + (pricing.free_max_seconds || 10) + " sec each)";
+      freePerWeek + " free generations in your 7-day free trial (Cheap Zone, up to " + (pricing.free_max_seconds || 10) + " sec each)";
     document.querySelectorAll(".model-price").forEach(function (el) {
       const id = el.dataset.model;
       if (id === "wan") el.textContent = pricing.wan_720_per_sec + " credits/sec (720p) · " + pricing.wan_1080_per_sec + " credits/sec (1080p)";
@@ -69,7 +69,7 @@
   function renderPublic() {
     if (!pricing) return;
     document.getElementById("pub-free-note").textContent =
-      freePerWeek + " free generations every week";
+      freePerWeek + " free generations in a 7-day free trial";
     const mk = function (name, big, sub) {
       const div = document.createElement("div");
       div.className = "pack-card";
@@ -84,7 +84,7 @@
     };
     const pg = document.getElementById("pub-plan-grid");
     pg.innerHTML = "";
-    pg.appendChild(mk("FREE", freePerWeek + " gens / week", "$0 · Cheap Zone clips"));
+    pg.appendChild(mk("FREE TRIAL", freePerWeek + " gens · 7 days", "$0 · Cheap Zone clips"));
     (pricing.plans || []).forEach(function (p) {
       pg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " / month"));
     });
@@ -94,8 +94,13 @@
       kg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " one-time"));
     });
   }
+  function trialOver() {
+    if (!profile || !profile.trial_ends_at) return false;
+    return Date.parse(profile.trial_ends_at) <= Date.now();
+  }
   function freeLeft() {
     if (!profile) return freePerWeek;
+    if (trialOver()) return 0;
     return Math.max(0, freePerWeek - (profile.free_gens_used || 0));
   }
   function qualifiesFreeUI() {
@@ -108,7 +113,7 @@
   function renderBalances() {
     if (!session) return;
     balanceChip.textContent = "⚡ " + (profile ? profile.credits : 0) + " credits";
-    freeChip.textContent = "🎁 " + freeLeft() + " free this week";
+    freeChip.textContent = trialOver() ? "🎁 trial over" : "🎁 " + freeLeft() + " free in trial";
     if (profile) {
       const planName = profile.plan && profile.plan !== "free"
         ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + " (monthly)"
@@ -125,8 +130,8 @@
     const free = document.createElement("div");
     free.className = "pack-card";
     free.innerHTML = "";
-    const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = "FREE";
-    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = freePerWeek + " gens / week";
+    const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = "FREE TRIAL";
+    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = freePerWeek + " gens · 7 days";
     const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = "$0 · Cheap Zone clips";
     free.append(fn, fc, fu);
     grid.appendChild(free);
@@ -163,7 +168,7 @@
     const line = document.getElementById("cost-line");
     const btn = document.getElementById("generate-btn");
     if (qualifiesFreeUI() && freeLeft() > 0) {
-      line.textContent = "This one is FREE — " + freeLeft() + " free generations left this week 🎁";
+      line.textContent = "This one is FREE — " + freeLeft() + " free generations left in your trial 🎁";
       btn.disabled = false;
       btn.textContent = "Generate (free)";
       return;
@@ -286,7 +291,7 @@
   }
   async function loadProfile() {
     if (!session) return;
-    // refresh applies the weekly free reset + any due monthly plan grant
+    // refresh applies any due monthly plan grant (the free trial never resets)
     try {
       const out = await callFn("bd-credits", { action: "refresh" });
       if (out && out.profile) {
