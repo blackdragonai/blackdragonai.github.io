@@ -49,6 +49,7 @@
     });
     renderPacks();
     renderPlans();
+    renderPublic();
     renderBalances();
     updateCost();
     if (isOwner()) {
@@ -59,6 +60,39 @@
       document.getElementById("price-freegens").value = freePerWeek;
       document.getElementById("price-freemax").value = pricing.free_max_seconds || 10;
     }
+  }
+  function scrollToAuth() {
+    authForm.scrollIntoView({ behavior: "smooth", block: "center" });
+    const em = document.getElementById("auth-email");
+    if (em) setTimeout(() => em.focus({ preventScroll: true }), 450);
+  }
+  function renderPublic() {
+    if (!pricing) return;
+    document.getElementById("pub-free-note").textContent =
+      freePerWeek + " free generations every week";
+    const mk = function (name, big, sub) {
+      const div = document.createElement("div");
+      div.className = "pack-card";
+      const n = document.createElement("div"); n.className = "pack-name"; n.textContent = name;
+      const c = document.createElement("div"); c.className = "pack-credits"; c.textContent = big;
+      const u = document.createElement("div"); u.className = "pack-usd"; u.textContent = sub;
+      const b = document.createElement("button");
+      b.className = "btn btn-gold"; b.type = "button"; b.textContent = "Start free";
+      b.addEventListener("click", scrollToAuth);
+      div.append(n, c, u, b);
+      return div;
+    };
+    const pg = document.getElementById("pub-plan-grid");
+    pg.innerHTML = "";
+    pg.appendChild(mk("FREE", freePerWeek + " gens / week", "$0 · Cheap Zone clips"));
+    (pricing.plans || []).forEach(function (p) {
+      pg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " / month"));
+    });
+    const kg = document.getElementById("pub-pack-grid");
+    kg.innerHTML = "";
+    (pricing.packs || []).forEach(function (p) {
+      kg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " one-time"));
+    });
   }
   function freeLeft() {
     if (!profile) return freePerWeek;
@@ -234,6 +268,7 @@
     session = data.session;
     const inOk = !!session;
     authForm.classList.toggle("hidden", inOk);
+    document.getElementById("showcase").classList.toggle("hidden", inOk);
     studio.classList.toggle("hidden", !inOk);
     signoutBtn.classList.toggle("hidden", !inOk);
     buyBtn.classList.toggle("hidden", !inOk);
@@ -522,6 +557,8 @@
       if (isOwner()) loadOwner();
     }, 12000);
   }
+
+  document.getElementById("pub-cta").addEventListener("click", scrollToAuth);
 
   loadPricing();
   refreshAuth();

@@ -32,6 +32,10 @@
   .status-chip.cancelled{background:#450a0a;color:#fca5a5}
   .linklike{background:none;border:none;color:#f5d76e;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
   .cost-line{font-weight:700;margin:8px 0}
+  #showcase video{width:100%;border-radius:12px;margin:6px 0;background:#000}
+  .steps{margin:8px 0;padding-left:20px}
+  .steps li{margin:6px 0}
+  .ex-label{font-weight:700;color:#f5d76e;margin-top:12px}
 </style>
 </head>
 <body>
@@ -53,6 +57,38 @@
 </header>
 
 <main class="wrap">
+
+  <!-- Public showcase: what it is, the plans, examples -->
+  <div id="showcase">
+    <div class="card">
+      <h3 style="margin-top:0;">What is Black Dragon AI?</h3>
+      <p>An AI video studio. <strong>Type what you want to see — it renders a cinematic video clip.</strong> Two engines: a <strong>free AI</strong> for your weekly free generations, and a <strong>premium AI</strong> (Seedance 2.5) for hero shots — up to 30 seconds, native sound, even starting from your own photo. A Black Dragon Films LLC studio.</p>
+      <ol class="steps">
+        <li><strong>Create a free account</strong> — email + password, you're in instantly.</li>
+        <li><strong>Generate</strong> — you get <strong id="pub-free-note">25 free generations every week</strong>. Write a prompt, pick the length and shape, hit Generate.</li>
+        <li><strong>Go further</strong> — grab a credit pack or a monthly plan, pay with Cash App / Venmo / Chime, credits land on your account.</li>
+      </ol>
+    </div>
+
+    <h2 class="section-title">The plans</h2>
+    <div class="card">
+      <div class="pack-grid" id="pub-plan-grid"></div>
+      <h3 style="margin-bottom:4px;">Credit packs (one-time)</h3>
+      <div class="pack-grid" id="pub-pack-grid"></div>
+      <p class="hint center">No card on file, nothing auto-charges. Plans renew when you pay the next month.</p>
+    </div>
+
+    <h2 class="section-title">Examples — made with this app</h2>
+    <div class="card">
+      <p class="ex-label">Cheap Zone (Wan) · 5 sec · 15 credits</p>
+      <video src="https://v3b.fal.media/files/b/0aafbede/ZDYJD-vrKHMp7i-n-N1kw_bEqRryrk.mp4" controls playsinline preload="none"></video>
+      <p class="muted">"A majestic chrome dragon soars over the Brooklyn skyline at dusk, city lights twinkling below, photorealistic, golden-hour light"</p>
+      <p class="ex-label">Premium Zone (Seedance 2.5) · 5 sec · 60 credits</p>
+      <video src="https://v3b.fal.media/files/b/0aafbf19/yq8Kc81ABSbPK24aLH3Sv_video.mp4" controls playsinline preload="none"></video>
+      <p class="muted">Same prompt, premium engine — compare the motion and detail.</p>
+      <button class="btn btn-gold" type="button" id="pub-cta" style="width:100%;">Start free — create your account</button>
+    </div>
+  </div>
 
   <!-- Auth: sign in or create an account -->
   <form class="card form-card" id="auth-form">
