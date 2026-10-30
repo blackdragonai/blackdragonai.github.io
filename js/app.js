@@ -289,9 +289,32 @@
     if (!f) return;
     if (!session) { imgName.textContent = "Sign in first, then upload your photo."; return; }
     imgName.textContent = "Uploading " + f.name + "…";
-    const ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    // ANY IMAGE TYPE (Keyz, 2026-10-30): PNG, JPG, WebP, GIF, BMP, AVIF,
+    // HEIC — whatever the phone hands us is converted to a standard JPEG
+    // right here in the browser before upload, so the generator always
+    // receives a format it can animate. If this browser cannot decode the
+    // file, the original goes up as-is and the backend sorts the format.
+    let blob = f;
+    let ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    let ctype = f.type || "image/jpeg";
+    try {
+      const objUrl = URL.createObjectURL(f);
+      const img = new Image();
+      await new Promise(function (res, rej) { img.onload = res; img.onerror = rej; img.src = objUrl; });
+      const maxSide = 1920;
+      const scale = Math.min(1, maxSide / Math.max(img.naturalWidth || 1, img.naturalHeight || 1));
+      const w = Math.max(1, Math.round((img.naturalWidth || 1) * scale));
+      const h = Math.max(1, Math.round((img.naturalHeight || 1) * scale));
+      const cv = document.createElement("canvas"); cv.width = w; cv.height = h;
+      const ctx = cv.getContext("2d");
+      ctx.fillStyle = "#000"; ctx.fillRect(0, 0, w, h);
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(objUrl);
+      const jb = await new Promise(function (res) { cv.toBlob(res, "image/jpeg", 0.92); });
+      if (jb && jb.size > 0) { blob = jb; ext = "jpg"; ctype = "image/jpeg"; }
+    } catch (e) { /* keep the original file */ }
     const path = session.user.id + "/" + Date.now() + "." + ext;
-    const up = await sb.storage.from("bd-uploads").upload(path, f, { contentType: f.type || "image/jpeg", upsert: true });
+    const up = await sb.storage.from("bd-uploads").upload(path, blob, { contentType: ctype, upsert: true });
     if (up.error) { imgName.textContent = "Upload failed — " + up.error.message; return; }
     const pub = sb.storage.from("bd-uploads").getPublicUrl(path);
     document.getElementById("image-url").value = pub.data.publicUrl;
