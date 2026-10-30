@@ -146,7 +146,7 @@
     free.innerHTML = "";
     const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = "FREE TRIAL";
     const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = freePerWeek + " gens · 7 days";
-    const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = "$0 · Cheap Zone clips";
+    const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = "$0 · free engine · reopens every 30 days";
     free.append(fn, fc, fu);
     grid.appendChild(free);
     (pricing.plans || []).forEach(function (p) {
@@ -171,10 +171,13 @@
       const n = document.createElement("div"); n.className = "pack-name"; n.textContent = esc(p.name).toUpperCase();
       const c = document.createElement("div"); c.className = "pack-credits"; c.textContent = p.credits + " credits";
       const u = document.createElement("div"); u.className = "pack-usd"; u.textContent = "$" + p.usd;
+      const v = document.createElement("div"); v.className = "pack-value";
+      const perClip = ((pricing && pricing.wan_720_per_sec) || 3) * 5;
+      v.textContent = "≈ " + Math.floor(p.credits / perClip) + " clips · 5s each · Wan 720p";
       const b = document.createElement("button");
       b.className = "btn btn-gold"; b.type = "button"; b.textContent = "Buy";
       b.addEventListener("click", () => buyPack(p.id));
-      div.append(n, c, u, b);
+      div.append(n, c, u, v, b);
       grid.appendChild(div);
     });
   }

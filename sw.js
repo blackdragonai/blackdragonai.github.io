@@ -1,5 +1,5 @@
 // BLACK DRAGON AI - service worker: network-first so the studio is always fresh.
-const CACHE = "black-dragon-v12";
+const CACHE = "black-dragon-v13";
 const SHELL = [
   "./", "./index.html", "./css/style.css", "./js/config.js", "./js/app.js",
   "./js/logo-data.js", "./js/pwa.js", "./manifest.webmanifest", "./icon.svg"
