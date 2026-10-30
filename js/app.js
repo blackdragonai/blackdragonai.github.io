@@ -11,7 +11,7 @@
   let session = null;
   let profile = null;
   let pricing = null;
-  let freePerWeek = 25;
+  let freePerWeek = 0;
   let selectedModel = cfg.MODELS[0];
   let pollTimer = null;
   let authMode = "in"; // "in" | "up"
@@ -38,7 +38,7 @@
     const { data } = await sb.from("bd_pricing").select("*").eq("id", 1).single();
     if (!data) return;
     pricing = data;
-    freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 25;
+    freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 0;
     document.getElementById("auth-rates").textContent =
       "Unlimited free generations in your 7-day window · reopens every 30 days · Credit packs $50 / $150 / $200 · Wan " + pricing.wan_720_per_sec + " credits/sec";
     document.getElementById("free-allowance-note").textContent =
@@ -58,7 +58,6 @@
       document.getElementById("price-wan1080").value = pricing.wan_1080_per_sec;
       document.getElementById("price-seed480").value = pricing.seedance_480_per_sec;
       document.getElementById("price-seed720").value = pricing.seedance_720_per_sec;
-      document.getElementById("price-freegens").value = freePerWeek;
       document.getElementById("price-freemax").value = pricing.free_max_seconds || 10;
     }
   }
@@ -143,7 +142,7 @@
     free.className = "pack-card";
     free.innerHTML = "";
     const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = "FREE TRIAL";
-    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = freePerWeek + " gens · 7 days";
+    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = "Unlimited gens · 7 days";
     const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = "$0 · free engine · reopens every 30 days";
     free.append(fn, fc, fu);
     grid.appendChild(free);
@@ -665,7 +664,7 @@
         wan_1080_per_sec: parseInt(document.getElementById("price-wan1080").value, 10),
         seedance_480_per_sec: parseInt(document.getElementById("price-seed480").value, 10),
         seedance_720_per_sec: parseInt(document.getElementById("price-seed720").value, 10),
-        free_gens_per_week: parseInt(document.getElementById("price-freegens").value, 10),
+        free_gens_per_week: null,
         free_max_seconds: parseInt(document.getElementById("price-freemax").value, 10)
       });
       msg.style.color = "#86efac";
