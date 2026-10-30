@@ -39,6 +39,11 @@
   .status-chip.cancelled{background:#450a0a;color:#fca5a5}
   .linklike{background:none;border:none;color:#f5d76e;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
   .cost-line{font-weight:700;margin:8px 0}
+  .price-meter{height:10px;background:#141416;border:1px solid #2a2a2e;border-radius:6px;overflow:hidden;margin:2px 0 10px}
+  .price-meter-fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2fbf71,#9fe6a0);transition:width .35s ease}
+  .price-meter-fill.mid{background:linear-gradient(90deg,#c99327,#f5c542)}
+  .price-meter-fill.high{background:linear-gradient(90deg,#a12424,#ee3333)}
+  .price-meter-fill.free{background:linear-gradient(90deg,#2fbf71,#9fe6a0)}
   #showcase video{width:100%;border-radius:12px;margin:6px 0;background:#000}
   .steps{margin:8px 0;padding-left:20px}
   .steps li{margin:6px 0}
@@ -152,6 +157,7 @@
       <label for="image-url">Reference image URL <span class="muted">(optional — Seedance only: the clip starts from this image)</span></label>
       <input id="image-url" type="url" placeholder="https://…">
       <p class="cost-line" id="cost-line"></p>
+      <div class="price-meter" id="price-meter" aria-hidden="true"><div class="price-meter-fill" id="price-meter-fill"></div></div>
       <p class="form-error" id="gen-error"></p>
       <button class="btn btn-gold" id="generate-btn" type="button" style="width:100%;">Generate</button>
       <p class="hint center" id="gen-note"></p>

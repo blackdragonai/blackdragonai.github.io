@@ -40,9 +40,9 @@
     pricing = data;
     freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 25;
     document.getElementById("auth-rates").textContent =
-      freePerWeek + " free generations in a 7-day free trial · Plans $50-$200/mo · Packs from $10 · Wan " + pricing.wan_720_per_sec + " credits/sec";
+      freePerWeek + " free generations in your 7-day window · reopens every 30 days · Credit packs $50 / $150 / $200 · Wan " + pricing.wan_720_per_sec + " credits/sec";
     document.getElementById("free-allowance-note").textContent =
-      freePerWeek + " free generations in your 7-day free trial (Cheap Zone, up to " + (pricing.free_max_seconds || 10) + " sec each)";
+      freePerWeek + " free generations in your 7-day window — reopens every 30 days (free engine, up to " + (pricing.free_max_seconds || 10) + " sec each)";
     document.querySelectorAll(".model-price").forEach(function (el) {
       const id = el.dataset.model;
       if (id === "wan") el.textContent = pricing.wan_720_per_sec + " credits/sec (720p) · " + pricing.wan_1080_per_sec + " credits/sec (1080p)";
@@ -178,17 +178,37 @@
       grid.appendChild(div);
     });
   }
+  function setMeter(pct, cls) {
+    const fill = document.getElementById("price-meter-fill");
+    if (!fill) return;
+    fill.style.width = Math.max(0, Math.min(100, pct)) + "%";
+    fill.className = "price-meter-fill" + (cls ? " " + cls : "");
+  }
   function updateCost() {
     const line = document.getElementById("cost-line");
     const btn = document.getElementById("generate-btn");
     if (qualifiesFreeUI() && freeLeft() > 0) {
-      line.textContent = "This one is FREE — " + freeLeft() + " free generations left in your trial 🎁";
+      line.textContent = "This one is FREE — " + freeLeft() + " free generations left in your 7-day window 🎁";
       btn.disabled = false;
       btn.textContent = "Generate (free)";
+      setMeter(100, "free");
       return;
     }
     const cost = currentCost();
-    if (cost == null) { line.textContent = ""; return; }
+    if (cost == null) {
+      // The free beta engine has no per-second price: show a FREE meter
+      // while beta_free is on, otherwise an empty meter.
+      if (selectedModel && selectedModel.id === "comfy" && pricing && pricing.beta_free && !trialOver()) {
+        line.textContent = "FREE during your 7-day window — the beta engine runs on us 🐉";
+        setMeter(100, "free");
+      } else { line.textContent = ""; setMeter(0, ""); }
+      return;
+    }
+    // The price meter: fill = this job's cost against the priciest
+    // standard render (Seedance 720p x 30s), green -> gold -> red.
+    const maxRef = ((pricing && pricing.seedance_720_per_sec) || 12) * 30;
+    const pct = Math.max(3, Math.round((cost / maxRef) * 100));
+    setMeter(pct, pct < 40 ? "" : pct < 75 ? "mid" : "high");
     const bal = profile ? profile.credits : null;
     line.textContent = "Cost: " + cost + " credits" + (bal != null ? " · Your balance after: " + (bal - cost) : "");
     if (bal != null && bal < cost) {
