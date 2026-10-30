@@ -7,6 +7,15 @@ window.BD_CONFIG = {
   OWNER_EMAIL: "littmobstudios@gmail.com",
   MODELS: [
     {
+      id: "comfy",
+      name: "Black Dragon FREE",
+      zone: "BETA — FREE",
+      blurb: "Our own free engine (Wan 2.2 cinematic). Free for everybody during the beta — test it hard.",
+      priceNote: "FREE during beta — no credits used",
+      durations: [5],
+      resolutions: ["720p"]
+    },
+    {
       id: "wan",
       name: "Wan 3.0",
       zone: "CHEAP ZONE",

@@ -21,6 +21,7 @@
   // ---------- pricing ----------
   function perSec(modelId, res) {
     if (!pricing) return null;
+    if (modelId === "comfy") return 0;
     if (modelId === "wan") return res === "1080p" ? pricing.wan_1080_per_sec : pricing.wan_720_per_sec;
     if (modelId === "seedance") return res === "480p" ? pricing.seedance_480_per_sec : pricing.seedance_720_per_sec;
     return null;
@@ -423,7 +424,7 @@
       div.className = "job";
       const head = document.createElement("div"); head.className = "job-head";
       const left = document.createElement("span");
-      left.textContent = (j.model === "seedance" ? "Seedance 2.5" : "Wan") + " · " + (j.duration || "?") + "s · " + (j.resolution || "")
+      left.textContent = (j.model === "seedance" ? "Seedance 2.5" : j.model === "comfy" ? "Black Dragon FREE (Beta)" : "Wan") + " · " + (j.duration || "?") + "s · " + (j.resolution || "")
         + (j.free_gen ? " · FREE" : j.credits_charged ? " · " + j.credits_charged + " credits" : "")
         + (isOwner() && j.user_email && j.user_email !== session.user.email ? " · " + j.user_email : "");
       const st = document.createElement("span");
