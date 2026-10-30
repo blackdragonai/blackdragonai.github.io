@@ -95,14 +95,27 @@
       kg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " one-time"));
     });
   }
-  function trialOver() {
-    if (!profile || !profile.trial_ends_at) return false;
-    return Date.parse(profile.trial_ends_at) <= Date.now();
+  function freeWindow() {
+    // Mirrors the server rule: free runs 7 days at a time on a 30-day
+    // cycle from signup. No weekly reset - the counter resets only when
+    // a new 30-day cycle begins.
+    if (!profile || !profile.trial_ends_at) return { open: true, used: profile ? (profile.free_gens_used || 0) : 0 };
+    const DAY = 24 * 3600 * 1000;
+    const start = Date.parse(profile.trial_ends_at) - 7 * DAY;
+    const el = Date.now() - start;
+    if (el < 0) return { open: true, used: profile.free_gens_used || 0 };
+    const cycleStart = start + Math.floor(el / (30 * DAY)) * (30 * DAY);
+    const open = (Date.now() - cycleStart) < 7 * DAY;
+    const lastReset = profile.free_cycle_start ? Date.parse(profile.free_cycle_start) : start;
+    const used = cycleStart > lastReset ? 0 : (profile.free_gens_used || 0);
+    return { open: open, used: used };
   }
+  function trialOver() { return !freeWindow().open; }
   function freeLeft() {
     if (!profile) return freePerWeek;
-    if (trialOver()) return 0;
-    return Math.max(0, freePerWeek - (profile.free_gens_used || 0));
+    const w = freeWindow();
+    if (!w.open) return 0;
+    return Math.max(0, freePerWeek - w.used);
   }
   function qualifiesFreeUI() {
     if (!pricing) return false;
