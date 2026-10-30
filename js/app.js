@@ -120,8 +120,7 @@
     if (!pricing) return false;
     const d = parseInt(document.getElementById("duration").value || "0", 10);
     const r = document.getElementById("resolution").value;
-    const img = document.getElementById("image-url").value.trim();
-    return selectedModel.id === "wan" && r === "720p" && d > 0 && d <= (pricing.free_max_seconds || 10) && !img;
+    return selectedModel.id === "wan" && r === "720p" && d > 0 && d <= (pricing.free_max_seconds || 10);
   }
   function renderBalances() {
     if (!session) return;
@@ -262,13 +261,46 @@
     });
     if (selectedModel.resolutions.includes("720p")) r.value = "720p";
     document.getElementById("gen-note").textContent =
-      selectedModel.id === "wan" ? "Cheap Zone: reference image is ignored here - use Seedance for image-led clips." : "";
+      selectedModel.id === "wan" ? "Cheap Zone: photo-led clips run on the free engine while your window is open — or on Seedance." : "";
     updateCost();
   }
   ["duration", "resolution"].forEach(function (id) {
     document.getElementById(id).addEventListener("change", updateCost);
   });
   document.getElementById("image-url").addEventListener("input", updateCost);
+  // Reference photo UPLOAD (Keyz, 2026-10-30): no URLs - the user picks a
+  // file from any device (phone, tablet, PC, or cloud storage through the
+  // OS picker); it lands in the bd-uploads bucket and the public link is
+  // handed to the generator behind the scenes.
+  const imgFile = document.getElementById("image-file");
+  const imgName = document.getElementById("image-upload-name");
+  const imgPrev = document.getElementById("image-preview");
+  const imgClear = document.getElementById("image-clear-btn");
+  document.getElementById("image-upload-btn").addEventListener("click", function () { imgFile.click(); });
+  imgClear.addEventListener("click", function () {
+    imgFile.value = "";
+    document.getElementById("image-url").value = "";
+    imgName.textContent = "No photo chosen";
+    imgPrev.hidden = true; imgPrev.removeAttribute("src");
+    imgClear.hidden = true;
+    updateCost();
+  });
+  imgFile.addEventListener("change", async function () {
+    const f = imgFile.files && imgFile.files[0];
+    if (!f) return;
+    if (!session) { imgName.textContent = "Sign in first, then upload your photo."; return; }
+    imgName.textContent = "Uploading " + f.name + "…";
+    const ext = (f.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "") || "jpg";
+    const path = session.user.id + "/" + Date.now() + "." + ext;
+    const up = await sb.storage.from("bd-uploads").upload(path, f, { contentType: f.type || "image/jpeg", upsert: true });
+    if (up.error) { imgName.textContent = "Upload failed — " + up.error.message; return; }
+    const pub = sb.storage.from("bd-uploads").getPublicUrl(path);
+    document.getElementById("image-url").value = pub.data.publicUrl;
+    imgName.textContent = "✓ " + f.name;
+    imgPrev.src = pub.data.publicUrl; imgPrev.hidden = false;
+    imgClear.hidden = false;
+    updateCost();
+  });
   fillOptions();
 
   // ---------- auth ----------

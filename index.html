@@ -155,8 +155,15 @@
           </select>
         </div>
       </div>
-      <label for="image-url">Reference image URL <span class="muted">(optional — Seedance only: the clip starts from this image)</span></label>
-      <input id="image-url" type="url" placeholder="https://…">
+      <label>Reference photo <span class="muted">(optional — upload from phone, tablet or PC: the clip starts from your photo)</span></label>
+      <input id="image-file" type="file" accept="image/*" hidden>
+      <input id="image-url" type="hidden" value="">
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 4px;">
+        <button id="image-upload-btn" type="button" class="btn btn-ghost">📷 Upload a photo</button>
+        <span id="image-upload-name" class="muted">No photo chosen</span>
+        <button id="image-clear-btn" type="button" class="btn btn-ghost" hidden>✕ Remove</button>
+      </div>
+      <img id="image-preview" alt="Your reference photo" hidden style="max-width:180px;border-radius:10px;border:1px solid var(--line);margin:4px 0;">
       <p class="cost-line" id="cost-line"></p>
       <div class="price-meter" id="price-meter" aria-hidden="true"><div class="price-meter-fill" id="price-meter-fill"></div></div>
       <p class="form-error" id="gen-error"></p>
