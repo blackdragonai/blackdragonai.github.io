@@ -190,6 +190,14 @@
   function updateCost() {
     const line = document.getElementById("cost-line");
     const btn = document.getElementById("generate-btn");
+    const dSel = parseInt(document.getElementById("duration").value || "0", 10);
+    if (dSel > 15 && !isProUser()) {
+      line.textContent = "30-second clips are PRO 🔒 — they unlock with any credit pack.";
+      btn.disabled = true;
+      btn.textContent = "PRO only — grab a pack below";
+      setMeter(100, "high");
+      return;
+    }
     if (qualifiesFreeUI() && freeLeft() > 0) {
       line.textContent = "This one is FREE — " + freeLeft() + " free generations left in your 7-day window 🎁";
       btn.disabled = false;
@@ -247,7 +255,7 @@
     const r = document.getElementById("resolution");
     d.innerHTML = ""; r.innerHTML = "";
     selectedModel.durations.forEach(function (s) {
-      const o = document.createElement("option"); o.value = s; o.textContent = s + " sec"; d.appendChild(o);
+      const o = document.createElement("option"); o.value = s; o.textContent = s === 30 ? "30 sec · PRO 🔒" : s + " sec"; d.appendChild(o);
     });
     if (selectedModel.durations.includes(10)) d.value = "10";
     selectedModel.resolutions.forEach(function (q) {
@@ -488,6 +496,14 @@
 
   // ---------- orders (buyer side) ----------
   let myOrdersCache = [];
+  let hasPaidOrder = false;
+  // PRO = owner, a plan holder, or anyone with a credited pack order.
+  // 30-second clips are PRO-only (server enforces it too).
+  function isProUser() {
+    if (isOwner()) return true;
+    if (profile && profile.plan && profile.plan !== "free") return true;
+    return hasPaidOrder;
+  }
   async function buyPack(packId) {
     try {
       const out = await callFn("bd-credits", { action: "create_order", pack_id: packId });
@@ -525,6 +541,8 @@
     const { data } = await sb.from("bd_orders").select("*")
       .eq("user_id", session.user.id).order("created_at", { ascending: false }).limit(10);
     myOrdersCache = data || [];
+    hasPaidOrder = myOrdersCache.some(function (o) { return o.status === "credited"; });
+    updateCost();
     const box = document.getElementById("my-orders");
     box.innerHTML = "";
     if (!myOrdersCache.length) { box.innerHTML = '<p class="hint">No orders yet.</p>'; return; }

@@ -12,7 +12,7 @@ window.BD_CONFIG = {
       zone: "BETA — FREE",
       blurb: "Our own free engine (Wan 2.2 cinematic). FREE 7 days at a time — reopens every 30 days. One free window per connection.",
       priceNote: "FREE in your 7-day window — reopens every 30 days",
-      durations: [5],
+      durations: [5, 10, 15],
       resolutions: ["720p"]
     },
     {
