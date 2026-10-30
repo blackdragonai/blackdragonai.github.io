@@ -40,9 +40,9 @@
     pricing = data;
     freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 25;
     document.getElementById("auth-rates").textContent =
-      freePerWeek + " free generations in your 7-day window · reopens every 30 days · Credit packs $50 / $150 / $200 · Wan " + pricing.wan_720_per_sec + " credits/sec";
+      "Unlimited free generations in your 7-day window · reopens every 30 days · Credit packs $50 / $150 / $200 · Wan " + pricing.wan_720_per_sec + " credits/sec";
     document.getElementById("free-allowance-note").textContent =
-      freePerWeek + " free generations in your 7-day window — reopens every 30 days (free engine, up to " + (pricing.free_max_seconds || 10) + " sec each)";
+      "Unlimited free generations in your 7-day window — reopens every 30 days (free engine, up to " + (pricing.free_max_seconds || 10) + " sec each)";
     document.querySelectorAll(".model-price").forEach(function (el) {
       const id = el.dataset.model;
       if (id === "wan") el.textContent = pricing.wan_720_per_sec + " credits/sec (720p) · " + pricing.wan_1080_per_sec + " credits/sec (1080p)";
@@ -70,7 +70,7 @@
   function renderPublic() {
     if (!pricing) return;
     document.getElementById("pub-free-note").textContent =
-      freePerWeek + " free generations in a 7-day free trial";
+      "Unlimited free generations in a 7-day free trial";
     const mk = function (name, big, sub) {
       const div = document.createElement("div");
       div.className = "pack-card";
@@ -85,7 +85,7 @@
     };
     const pg = document.getElementById("pub-plan-grid");
     pg.innerHTML = "";
-    pg.appendChild(mk("FREE TRIAL", freePerWeek + " gens · 7 days", "$0 · Cheap Zone clips"));
+    pg.appendChild(mk("FREE TRIAL", "Unlimited gens · 7 days", "$0 · Cheap Zone clips"));
     (pricing.plans || []).forEach(function (p) {
       pg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " / month"));
     });
@@ -112,10 +112,9 @@
   }
   function trialOver() { return !freeWindow().open; }
   function freeLeft() {
-    if (!profile) return freePerWeek;
-    const w = freeWindow();
-    if (!w.open) return 0;
-    return Math.max(0, freePerWeek - w.used);
+    // Unlimited inside the 7-day window (Keyz, 2026-10-30): no count.
+    if (!profile) return 999;
+    return freeWindow().open ? 999 : 0;
   }
   function qualifiesFreeUI() {
     if (!pricing) return false;
@@ -127,7 +126,7 @@
   function renderBalances() {
     if (!session) return;
     balanceChip.textContent = "⚡ " + (profile ? profile.credits : 0) + " credits";
-    freeChip.textContent = trialOver() ? "🎁 trial over" : "🎁 " + freeLeft() + " free in trial";
+    freeChip.textContent = trialOver() ? "🎁 trial over" : "🎁 unlimited free in window";
     if (profile) {
       const planName = profile.plan && profile.plan !== "free"
         ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + " (monthly)"
@@ -199,7 +198,7 @@
       return;
     }
     if (qualifiesFreeUI() && freeLeft() > 0) {
-      line.textContent = "This one is FREE — " + freeLeft() + " free generations left in your 7-day window 🎁";
+      line.textContent = "This one is FREE — unlimited generations inside your 7-day window 🎁";
       btn.disabled = false;
       btn.textContent = "Generate (free)";
       setMeter(100, "free");
