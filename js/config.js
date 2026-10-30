@@ -10,8 +10,8 @@ window.BD_CONFIG = {
       id: "comfy",
       name: "Black Dragon FREE",
       zone: "BETA — FREE",
-      blurb: "Our own free engine (Wan 2.2 cinematic). Free for everybody during the beta — test it hard.",
-      priceNote: "FREE during beta — no credits used",
+      blurb: "Our own free engine (Wan 2.2 cinematic). FREE for your first 7 days — after that, credits. One free window per connection.",
+      priceNote: "FREE for 7 days — then credits",
       durations: [5],
       resolutions: ["720p"]
     },
