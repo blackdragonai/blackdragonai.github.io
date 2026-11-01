@@ -1,6 +1,10 @@
+/* BLACK DRAGON AI — Sora-style dark UI (v19 rebuild).
+   Near-black canvas, borderless dark panels, big radii, one floating
+   pill composer, system sans. Gold survives only as the logo accent. */
 :root{
-  --bg:#000; --panel:#101013; --panel2:#17171c; --line:#26262e;
-  --text:#f2f2f4; --muted:#9a9aa5; --chrome:#d8d8de; --accent:#e8e8ee;
+  --bg:#0a0a0b; --panel:#131315; --panel2:#17171a; --field:#1b1b1e; --line:#26262b;
+  --text:#f5f5f4; --muted:#a1a1aa; --chrome:#e4e4e7; --accent:#ffffff;
+  --gold:#d4af37;
   --danger:#ff7a7a;
 }
 *{box-sizing:border-box}
@@ -8,43 +12,67 @@ body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-appl
 a{color:var(--chrome)}
 .hidden{display:none!important}
 .site-header{display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 16px;border-bottom:1px solid var(--line);background:#050506;position:sticky;top:0;z-index:50}
+  padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.06);
+  background:rgba(10,10,11,.72);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  position:sticky;top:0;z-index:50}
 .brand-row{display:flex;align-items:center;gap:12px}
-.brand-logo{width:58px;height:58px;object-fit:contain}
+.brand-logo{width:52px;height:52px;object-fit:contain}
 .brand-name{font-weight:900;font-size:21px;letter-spacing:.06em}
-.brand-name span{background:linear-gradient(180deg,#fff,#8f8f99);-webkit-background-clip:text;background-clip:text;color:transparent}
+.brand-name span{background:linear-gradient(180deg,#f5d76e,#d4af37);-webkit-background-clip:text;background-clip:text;color:transparent}
 .brand-sub{font-size:10.5px;color:var(--muted);letter-spacing:.18em}
-.wrap{max-width:880px;margin:0 auto;padding:20px 16px 48px}
-.section-title{font-size:19px;letter-spacing:.04em;margin:26px 0 12px}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin:12px 0}
+.wrap{max-width:920px;margin:0 auto;padding:24px 16px 56px}
+.section-title{font-size:20px;letter-spacing:.02em;margin:30px 0 12px}
+.card{background:var(--panel);border:none;border-radius:24px;padding:20px;margin:12px 0}
 .form-card{max-width:460px;margin:26px auto}
 label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
-input,select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:9px;
-  color:var(--text);padding:10px 11px;font-size:15px}
-textarea{resize:vertical}
+input,select,textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:14px;
+  color:var(--text);padding:11px 13px;font-size:15px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#3f3f46}
+textarea{resize:vertical;border-radius:18px}
 .row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
 @media(max-width:560px){.row{grid-template-columns:1fr 1fr}}
 .btn{display:inline-block;border:1px solid var(--line);background:var(--panel2);color:var(--text);
-  border-radius:999px;padding:11px 20px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none}
-.btn-gold{background:linear-gradient(180deg,#f4f4f6,#a9a9b4);color:#000;border:none}
-.btn-ghost{background:transparent}
-.btn-small{padding:7px 13px;font-size:13px}
+  border-radius:999px;padding:11px 22px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+/* Primary action = Sora's white pill (class name kept from the gold era). */
+.btn-gold{background:#ffffff;color:#000;border:none}
+.btn-gold:hover{background:#e7e7e9}
+.btn-ghost{background:transparent;border:1px solid #2e2e33}
+.btn-small{padding:7px 14px;font-size:13px}
 .form-error{color:var(--danger);min-height:18px;font-size:14px}
 .hint{color:var(--muted);font-size:13px}
 .muted{color:var(--muted)}
 .center{text-align:center}
-.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
-.model-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;cursor:pointer;text-align:left;width:100%;color:var(--text)}
-.model-card.selected{border-color:#d8d8de;box-shadow:0 0 0 1px #d8d8de,0 10px 30px rgba(255,255,255,.06)}
+/* Models: minimal selectable cards (rendered by app.js). */
+.model-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.model-card{background:var(--panel2);border:1px solid transparent;border-radius:24px;padding:16px 18px;cursor:pointer;text-align:left;width:100%;color:var(--text)}
+.model-card.selected{border-color:#f5f5f4;box-shadow:0 0 0 1px #f5f5f4,0 12px 32px rgba(0,0,0,.45)}
 .model-card.disabled{opacity:.45;cursor:not-allowed}
-.model-zone{font-size:10.5px;letter-spacing:.18em;color:#000;background:linear-gradient(180deg,#f4f4f6,#a9a9b4);
-  display:inline-block;padding:3px 8px;border-radius:6px;font-weight:800}
-.model-name{font-size:19px;font-weight:800;margin:9px 0 4px}
+.model-zone{font-size:10.5px;letter-spacing:.18em;color:#e4e4e7;background:#26262b;
+  display:inline-block;padding:3px 9px;border-radius:999px;font-weight:800}
+.model-name{font-size:18px;font-weight:800;margin:9px 0 4px}
 .model-price{color:var(--chrome);font-size:13px;margin-top:8px}
-.job{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:10px 0}
+/* Composer: on wide screens it floats, sticky to the viewport bottom,
+   like Sora's prompt bar. Mobile keeps the plain in-flow card. */
+@media(min-width:900px){
+  .composer-card{position:sticky;bottom:16px;z-index:40;
+    background:rgba(19,19,21,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-radius:28px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+}
+/* Your clips: large rounded video cards (classes rendered by app.js). */
+.job{background:var(--panel);border:none;border-radius:24px;padding:18px;margin:12px 0}
 .job-head{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
 .job-status{font-weight:800;letter-spacing:.08em}
 .job-status.done{color:#9fe6a0}.job-status.error{color:var(--danger)}
-.job video{width:100%;border-radius:10px;margin-top:10px;background:#000}
+.job video{width:100%;border-radius:20px;margin-top:10px;background:#000}
 .job .prompt{margin:6px 0 0}
-footer{border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;text-align:center;padding:20px 14px 30px;line-height:1.7}
+/* Build a Game engine cards (static section in #studio). */
+.engine-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:6px 0 10px}
+.engine-card{background:var(--panel2);border-radius:20px;padding:16px}
+.engine-name{font-size:17px;font-weight:800;margin-bottom:8px}
+.engine-card p{margin:10px 0 0;font-size:13.5px;line-height:1.5}
+.engine-status{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.engine-status.live{background:#14532d;color:#86efac}
+.engine-status.ready{background:#3f3003;color:#f5d76e}
+.engine-status.later{background:#232327;color:#a1a1aa}
+footer{border-top:1px solid rgba(255,255,255,.06);color:var(--muted);font-size:12.5px;text-align:center;padding:20px 14px 30px;line-height:1.7}

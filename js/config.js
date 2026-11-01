@@ -10,7 +10,17 @@ window.BD_CONFIG = {
       id: "comfy",
       name: "Black Dragon FREE",
       zone: "BETA — FREE",
-      blurb: "Our own free engine (Wan 2.2 cinematic). FREE 7 days at a time — reopens every 30 days. One free window per connection.",
+      blurb: "Open-source Wan 2.2 text-to-video on our own engine. FREE 7 days at a time — reopens every 30 days. One free window per connection.",
+      priceNote: "FREE in your 7-day window — reopens every 30 days",
+      durations: [5, 10, 15],
+      resolutions: ["720p"]
+    },
+    {
+      id: "comfy-i2v",
+      hidden: true, // SHIP GATE: flips off at the engine session, once bd-generate/bd-status are deployed + I2V is live-tested
+      name: "Black Dragon FREE — Image to Video",
+      zone: "BETA — FREE",
+      blurb: "Open-source Wan 2.2 image-to-video on our own engine. Sora-style: start from your photo and tell it how to move.",
       priceNote: "FREE in your 7-day window — reopens every 30 days",
       durations: [5, 10, 15],
       resolutions: ["720p"]
@@ -22,7 +32,8 @@ window.BD_CONFIG = {
       blurb: "Fast, low-cost clips. The workhorse - start here.",
       priceNote: "Low per-second rate - cheapest zone",
       durations: [5, 10, 15],
-      resolutions: ["720p", "1080p"]
+      resolutions: ["720p", "1080p"],
+      hidden: true
     },
     {
       id: "seedance",
@@ -31,7 +42,8 @@ window.BD_CONFIG = {
       blurb: "ByteDance's cinematic model. Up to 30 seconds, native audio, reference images/video/audio.",
       priceNote: "Premium rate - credits per second",
       durations: [5, 10, 15, 30],
-      resolutions: ["480p", "720p"]
+      resolutions: ["480p", "720p"],
+      hidden: true
     },
     {
       id: "music",

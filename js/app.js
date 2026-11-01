@@ -21,7 +21,7 @@
   // ---------- pricing ----------
   function perSec(modelId, res) {
     if (!pricing) return null;
-    if (modelId === "comfy") return 0;
+    if (modelId === "comfy" || modelId === "comfy-i2v") return 0;
     if (modelId === "wan") return res === "1080p" ? pricing.wan_1080_per_sec : pricing.wan_720_per_sec;
     if (modelId === "seedance") return res === "480p" ? pricing.seedance_480_per_sec : pricing.seedance_720_per_sec;
     return null;
@@ -231,6 +231,7 @@
   // ---------- models ----------
   const grid = document.getElementById("model-grid");
   cfg.MODELS.forEach(function (m) {
+    if (m.hidden) return; // retired from the visible lineup (code path kept, reversible)
     const b = document.createElement("button");
     b.type = "button";
     b.className = "model-card" + (m.disabled ? " disabled" : "") + (m === selectedModel ? " selected" : "");
@@ -261,6 +262,14 @@
     if (selectedModel.resolutions.includes("720p")) r.value = "720p";
     document.getElementById("gen-note").textContent =
       selectedModel.id === "wan" ? "Cheap Zone: photo-led clips run on the free engine while your window is open — or on Seedance." : "";
+    // Image-to-Video makes the photo required; every other model keeps
+    // it optional. Just the hint text changes - same field, same flow.
+    const imgHint = document.getElementById("image-hint");
+    if (imgHint) {
+      imgHint.textContent = selectedModel.id === "comfy-i2v"
+        ? "(required for Image to Video — the clip starts from your photo and follows your prompt: any image type — PNG, JPG, WebP, GIF, HEIC)"
+        : "(optional — upload from phone, tablet or PC: any image type — PNG, JPG, WebP, GIF, HEIC — the clip starts from your photo)";
+    }
     updateCost();
   }
   ["duration", "resolution"].forEach(function (id) {
@@ -433,6 +442,10 @@
     err.textContent = "";
     const prompt = document.getElementById("prompt").value.trim();
     if (!prompt) { err.textContent = "Write a prompt first."; return; }
+    if (selectedModel.id === "comfy-i2v" && !document.getElementById("image-url").value.trim()) {
+      err.textContent = "Image to Video needs a photo first — upload one above.";
+      return;
+    }
     const btn = this;
     btn.disabled = true; btn.textContent = "Sending...";
     try {
@@ -521,7 +534,7 @@
       div.className = "job";
       const head = document.createElement("div"); head.className = "job-head";
       const left = document.createElement("span");
-      left.textContent = (j.model === "seedance" ? "Seedance 2.5" : j.model === "comfy" ? "Black Dragon FREE (Beta)" : "Wan") + " · " + (j.duration || "?") + "s · " + (j.resolution || "")
+      left.textContent = (j.model === "seedance" ? "Seedance 2.5" : j.model === "comfy-i2v" ? "Black Dragon FREE — Image to Video (Beta)" : j.model === "comfy" ? "Black Dragon FREE (Beta)" : "Wan") + " · " + (j.duration || "?") + "s · " + (j.resolution || "")
         + (j.free_gen ? " · FREE" : j.credits_charged ? " · " + j.credits_charged + " credits" : "")
         + (isOwner() && j.user_email && j.user_email !== session.user.email ? " · " + j.user_email : "");
       const st = document.createElement("span");

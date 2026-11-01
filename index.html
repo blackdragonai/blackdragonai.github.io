@@ -11,48 +11,48 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>BLACK DRAGON AI — Video Studio</title>
-<meta name="description" content="BLACK DRAGON AI by Black Dragon Films LLC. Cinematic AI video on credits: cheap-zone volume clips and Seedance 2.5 premium.">
+<meta name="description" content="BLACK DRAGON AI by Black Dragon Films LLC. A free open-source AI video studio (BETA): text-to-video and image-to-video on our own Wan 2.2 engine. 7-day free windows, credit packs for more.">
 <meta property="og:title" content="BLACK DRAGON AI — Video Studio">
-<meta property="og:description" content="Type what you want to see — it renders a cinematic AI video clip. 7-day free trial, then monthly plans.">
+<meta property="og:description" content="Black Dragon AI is in BETA — a free tryout. Type what you want to see, or start from your photo, and our free open-source engines render the clip.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://blackdragonai.github.io/">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"BLACK DRAGON AI — Video Studio","url":"https://blackdragonai.github.io/","applicationCategory":"MultimediaApplication","operatingSystem":"Web browser","publisher":{"@type":"Organization","name":"Black Dragon Films LLC"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"7-day free trial with unlimited free generations; credit packs $50 / $150 / $200."},"description":"AI video studio: type a prompt, get a cinematic video clip. Cheap Zone (Wan) and Premium Zone (Seedance 2.5)."}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"BLACK DRAGON AI — Video Studio","url":"https://blackdragonai.github.io/","applicationCategory":"MultimediaApplication","operatingSystem":"Web browser","publisher":{"@type":"Organization","name":"Black Dragon Films LLC"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD","description":"7-day free trial with unlimited free generations; credit packs $50 / $150 / $200."},"description":"AI video studio (beta): type a prompt or start from a photo, get a cinematic video clip from free open-source engines (Wan 2.2 text-to-video and image-to-video)."}
 </script>
 <link rel="stylesheet" href="css/style.css">
 <style>
   .head-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .chip{background:#1a1a1a;border:1px solid #d4af37;color:#f5d76e;border-radius:999px;padding:4px 12px;font-weight:700;font-size:14px;white-space:nowrap}
-  .pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
-  .pack-card{background:#111;border:1px solid #333;border-radius:12px;padding:14px;text-align:center}
-  .pack-card .pack-name{color:#f5d76e;font-weight:700;letter-spacing:1px}
+  .chip{background:#17171a;border:1px solid #2b2b30;color:#f5f5f4;border-radius:999px;padding:5px 13px;font-weight:700;font-size:14px;white-space:nowrap}
+  .pack-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:10px 0}
+  .pack-card{background:#17171a;border:none;border-radius:20px;padding:18px 14px;text-align:center}
+  .pack-card .pack-name{color:#d4af37;font-weight:700;letter-spacing:1px}
   .pack-card .pack-credits{font-size:26px;font-weight:800;margin:4px 0}
-  .pack-card .pack-usd{color:#aaa;margin-bottom:10px}
+  .pack-card .pack-usd{color:#a1a1aa;margin-bottom:10px}
   .pack-card .pack-value{color:#9fe6a0;font-size:13px;font-weight:700;margin:-4px 0 10px}
   .tbl{width:100%;border-collapse:collapse;font-size:14px}
-  .tbl td,.tbl th{padding:6px 4px;border-bottom:1px solid #222;text-align:left;vertical-align:middle}
+  .tbl td,.tbl th{padding:6px 4px;border-bottom:1px solid #232327;text-align:left;vertical-align:middle}
   .tbl input[type=number]{width:76px}
-  .order-code{font-size:24px;font-weight:800;letter-spacing:2px;color:#f5d76e}
+  .order-code{font-size:24px;font-weight:800;letter-spacing:2px;color:#d4af37}
   .pay-row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
-  .status-chip{border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;background:#222;color:#ccc;text-transform:uppercase}
+  .status-chip{border-radius:999px;padding:2px 10px;font-size:12px;font-weight:700;background:#232327;color:#d4d4d8;text-transform:uppercase}
   .status-chip.credited{background:#14532d;color:#86efac}
   .status-chip.pending{background:#3f3003;color:#f5d76e}
   .status-chip.cancelled{background:#450a0a;color:#fca5a5}
-  .linklike{background:none;border:none;color:#f5d76e;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
+  .linklike{background:none;border:none;color:#d4af37;cursor:pointer;text-decoration:underline;font-size:14px;padding:0}
   .cost-line{font-weight:700;margin:8px 0}
-  .price-meter{height:10px;background:#141416;border:1px solid #2a2a2e;border-radius:6px;overflow:hidden;margin:2px 0 10px}
-  .price-meter-fill{height:100%;width:0;border-radius:6px;background:linear-gradient(90deg,#2fbf71,#9fe6a0);transition:width .35s ease}
+  .price-meter{height:10px;background:#17171a;border:none;border-radius:999px;overflow:hidden;margin:2px 0 10px}
+  .price-meter-fill{height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#2fbf71,#9fe6a0);transition:width .35s ease}
   .price-meter-fill.mid{background:linear-gradient(90deg,#c99327,#f5c542)}
   .price-meter-fill.high{background:linear-gradient(90deg,#a12424,#ee3333)}
   .price-meter-fill.free{background:linear-gradient(90deg,#2fbf71,#9fe6a0)}
-  #showcase video{width:100%;border-radius:12px;margin:6px 0;background:#000}
+  #showcase video{width:100%;border-radius:24px;margin:6px 0;background:#000}
   .steps{margin:8px 0;padding-left:20px}
   .steps li{margin:6px 0}
-  .ex-label{font-weight:700;color:#f5d76e;margin-top:12px}
+  .ex-label{font-weight:700;color:#d4af37;margin-top:12px}
   #chat-messages{display:flex;flex-direction:column;gap:8px;max-height:420px;overflow-y:auto;margin:10px 0}
-  .chat-msg{max-width:85%;padding:9px 12px;border-radius:12px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
-  .chat-msg.user{align-self:flex-end;background:#26262e;border:1px solid #3a3a44;color:#f2f2f4}
-  .chat-msg.assistant{align-self:flex-start;background:#111;border:1px solid #333;color:#e8e8ee}
+  .chat-msg{max-width:85%;padding:10px 14px;border-radius:18px;font-size:14.5px;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+  .chat-msg.user{align-self:flex-end;background:#26262b;border:none;color:#f5f5f4}
+  .chat-msg.assistant{align-self:flex-start;background:#17171a;border:none;color:#e8e8ee}
   .chat-msg.system{align-self:center;background:#3f3003;border:1px solid #d4af37;color:#f5d76e;text-align:center;max-width:100%}
   .chat-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
   .chat-controls .chat-model-wrap{flex:0 1 220px}
@@ -83,11 +83,11 @@
   <div id="showcase">
     <div class="card">
       <h3 style="margin-top:0;">What is Black Dragon AI?</h3>
-      <p>An AI video studio. <strong>Type what you want to see — it renders a cinematic video clip.</strong> Two engines: a <strong>free AI</strong> for your 7-day free trial, and a <strong>premium AI</strong> (Seedance 2.5) for hero shots — up to 30 seconds, native sound, even starting from your own photo. A Black Dragon Films LLC studio.</p>
+      <p>An AI video studio running on <strong>free, open-source engines</strong> — no rented AI, no per-render bill. <strong>Black Dragon AI is in BETA — a free tryout.</strong> Two ways to make a clip: <strong>Text to Video</strong> — type what you want to see and it renders a cinematic clip; and <strong>Image to Video</strong> — start from your own photo and describe how it should move, Sora-style. Both run on our own Wan 2.2 engine. A Black Dragon Films LLC studio.</p>
       <ol class="steps">
         <li><strong>Create a free account</strong> — email + password, you're in instantly.</li>
-        <li><strong>Generate</strong> — you get a <strong>7-day free trial: <span id="pub-free-note">unlimited free generations for 7 days</span></strong>. Write a prompt, pick the length and shape, hit Generate.</li>
-        <li><strong>Like it? Pay monthly</strong> — pick a monthly plan or a credit pack, pay with Cash App / Venmo / Chime, credits land on your account.</li>
+        <li><strong>Generate free</strong> — you get a <strong>7-day free trial: <span id="pub-free-note">unlimited free generations for 7 days</span></strong>. Write a prompt — or upload a photo and tell it how to move — pick the length and shape, hit Generate.</li>
+        <li><strong>Like it? Keep creating</strong> — pick a monthly plan or a credit pack, pay with Cash App / Venmo / Chime, credits land on your account.</li>
       </ol>
     </div>
 
@@ -101,12 +101,12 @@
 
     <h2 class="section-title">Examples — made with this app</h2>
     <div class="card">
-      <p class="ex-label">Cheap Zone (Wan) · 5 sec · 15 credits</p>
+      <p class="ex-label">Text to Video · free engine · 5 sec</p>
       <video src="https://v3b.fal.media/files/b/0aafbede/ZDYJD-vrKHMp7i-n-N1kw_bEqRryrk.mp4" controls playsinline preload="none"></video>
       <p class="muted">"A majestic chrome dragon soars over the Brooklyn skyline at dusk, city lights twinkling below, photorealistic, golden-hour light"</p>
-      <p class="ex-label">Premium Zone (Seedance 2.5) · 5 sec · 60 credits</p>
+      <p class="ex-label">Text to Video · second take · 5 sec</p>
       <video src="https://v3b.fal.media/files/b/0aafbf19/yq8Kc81ABSbPK24aLH3Sv_video.mp4" controls playsinline preload="none"></video>
-      <p class="muted">Same prompt, premium engine — compare the motion and detail.</p>
+      <p class="muted">Same prompt, second render — compare the motion and detail.</p>
       <button class="btn btn-gold" type="button" id="pub-cta" style="width:100%;">Start free — create your account</button>
     </div>
   </div>
@@ -132,7 +132,7 @@
     <h2 class="section-title">Pick your weapon</h2>
     <div class="model-grid" id="model-grid"></div>
 
-    <div class="card">
+    <div class="card composer-card">
       <label for="prompt">Describe the clip</label>
       <textarea id="prompt" rows="4" placeholder="Subject, action, environment, lighting, camera move. Example: Slow push-in on a chrome dragon statue in a smoke-filled studio, cinematic light, embers in the air"></textarea>
       <div class="row">
@@ -155,7 +155,7 @@
           </select>
         </div>
       </div>
-      <label>Reference photo <span class="muted">(optional — upload from phone, tablet or PC: any image type — PNG, JPG, WebP, GIF, HEIC — the clip starts from your photo)</span></label>
+      <label>Reference photo <span class="muted" id="image-hint">(optional — upload from phone, tablet or PC: any image type — PNG, JPG, WebP, GIF, HEIC — the clip starts from your photo)</span></label>
       <input id="image-file" type="file" accept="image/*" hidden>
       <input id="image-url" type="hidden" value="">
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 4px;">
@@ -171,6 +171,31 @@
       <p class="hint center" id="gen-note"></p>
     </div>
 
+    <!-- Build a Game: engines on Keyz's PC -->
+    <div id="game-builder">
+      <h2 class="section-title">Build a Game — pick your engine</h2>
+      <div class="card">
+        <div class="engine-grid">
+          <div class="engine-card">
+            <div class="engine-name">Unity</div>
+            <span class="engine-status live">Bridge LIVE</span>
+            <p class="muted">Our own GV Bridge + MCP are proven — scenes, objects and scripts build straight into the GLOBAL VIZION project on your PC.</p>
+          </div>
+          <div class="engine-card">
+            <div class="engine-name">Blender</div>
+            <span class="engine-status ready">Add-on ready</span>
+            <p class="muted">Install the BlenderMCP add-on Muse supplied and press Connect — then models and sculpts flow between here and Blender.</p>
+          </div>
+          <div class="engine-card">
+            <div class="engine-name">Unreal Engine</div>
+            <span class="engine-status later">UE 5.8 MCP built in</span>
+            <p class="muted">Unreal ships with its own MCP in 5.8 — connect it when Unreal is installed on your PC.</p>
+          </div>
+        </div>
+        <p class="hint center">Assets are generated here with the free engines, then built in the engine on your PC. Only Unity is live today — Blender and Unreal join as they connect.</p>
+      </div>
+    </div>
+
     <!-- Buy credits -->
     <div id="buy-section">
       <h2 class="section-title">Plans &amp; credits</h2>
@@ -178,7 +203,7 @@
         <p id="plan-line" style="margin-top:0;">Your plan: <strong>Free</strong></p>
         <h3 style="margin-bottom:4px;">Monthly plans</h3>
         <div class="pack-grid" id="plan-grid"></div>
-        <p class="hint">Every new account starts with a <strong>7-day free trial</strong> — <strong id="free-allowance-note">unlimited free generations for 7 days</strong> in the Cheap Zone. When the window closes, free generations stop — like it, grab a credit pack and keep creating. Pay the same way as everything here (code in the note); your credits switch on when the payment is confirmed. No card on file, nothing auto-charges.</p>
+        <p class="hint">Every new account starts with a <strong>7-day free trial</strong> — <strong id="free-allowance-note">unlimited free generations for 7 days</strong> on the free engine. When the window closes, free generations stop — like it, grab a credit pack and keep creating. Pay the same way as everything here (code in the note); your credits switch on when the payment is confirmed. No card on file, nothing auto-charges.</p>
         <h3 style="margin-bottom:4px;">Credit packs (one-time)</h3>
         <div class="pack-grid" id="pack-grid"></div>
         <div id="order-panel" class="hidden">
@@ -204,7 +229,7 @@
     <div id="chat-section">
       <h2 class="section-title">AI Chat — Free AI Models</h2>
       <div class="card">
-        <p class="muted" style="margin-top:0;">Stuck on a prompt? Ask the Black Dragon assistant — it sharpens rough ideas into ready-to-paste video prompts for the Cheap Zone and Premium Zone, and answers questions about plans and credits.</p>
+        <p class="muted" style="margin-top:0;">Stuck on a prompt? Ask the Black Dragon assistant — it sharpens rough ideas into ready-to-paste video prompts for the free engines, and answers questions about plans and credits.</p>
         <div id="chat-messages">
           <div class="chat-msg assistant">🐉 Tell me the clip you're picturing — subject, vibe, anything — and I'll turn it into a prompt you can paste straight into the generator above.</div>
         </div>
@@ -242,7 +267,7 @@
         </div>
         <p class="form-error" id="chat-error"></p>
         <button class="btn btn-gold" id="chat-send" type="button" style="width:100%;">Send</button>
-        <p class="hint center">Free models run on OpenRouter at $0 — they carry daily limits, so if one stalls, pick another. DeepSeek runs on the studio's DeepSeek balance. Chat writes words, not clips — video generation is the zones above.</p>
+        <p class="hint center">Free models run on OpenRouter at $0 — they carry daily limits, so if one stalls, pick another. DeepSeek runs on the studio's DeepSeek balance. Chat writes words, not clips — video generation is the studio above.</p>
       </div>
     </div>
 
@@ -272,7 +297,7 @@
 
 <footer>
   BLACK DRAGON AI · a Black Dragon Films LLC studio<br>
-  Cheap Zone volume + Seedance 2.5 premium. Pay per clip with credits — no subscription.
+  Free open-source video engines (BETA) — text-to-video + image-to-video. Credit packs keep you creating after your free window.
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
