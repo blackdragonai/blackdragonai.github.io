@@ -16,6 +16,15 @@ window.BD_CONFIG = {
       resolutions: ["720p"]
     },
     {
+      id: "comfy-ltx",
+      name: "LTX-2.5 FREE — ComfyUI",
+      zone: "BETA — FREE",
+      blurb: "Open-source LTX-2.5 text-to-video on our own engine. Video with the sound built in — and one prompt can carry a whole multi-shot story. FREE 7 days at a time — reopens every 30 days. One free window per connection.",
+      priceNote: "FREE in your 7-day window — reopens every 30 days",
+      durations: [5, 10, 15],
+      resolutions: ["720p"]
+    },
+    {
       id: "comfy-i2v",
       hidden: true, // SHIP GATE: flips off at the engine session, once bd-generate/bd-status are deployed + I2V is live-tested
       name: "Black Dragon FREE — Image to Video",
