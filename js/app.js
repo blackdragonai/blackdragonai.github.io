@@ -537,9 +537,10 @@
       left.textContent = (j.model === "seedance" ? "Seedance 2.5" : j.model === "comfy-i2v" ? "Black Dragon FREE — Image to Video (Beta)" : j.model === "comfy-ltx" ? "LTX-2.5 FREE — ComfyUI (Beta)" : j.model === "comfy" ? "Black Dragon FREE (Beta)" : "Wan") + " · " + (j.duration || "?") + "s · " + (j.resolution || "")
         + (j.free_gen ? " · FREE" : j.credits_charged ? " · " + j.credits_charged + " credits" : "")
         + (isOwner() && j.user_email && j.user_email !== session.user.email ? " · " + j.user_email : "");
+      const engineOffline = j.status === "error" && j.error && j.error.indexOf("engine_offline") !== -1;
       const st = document.createElement("span");
       st.className = "job-status " + (j.status === "done" ? "done" : j.status === "error" ? "error" : "");
-      st.textContent = j.status.toUpperCase();
+      st.textContent = j.status === "waiting" ? "IN LINE" : engineOffline ? "ENGINE OFFLINE" : j.status.toUpperCase();
       head.append(left, st);
       const p = document.createElement("p"); p.className = "prompt"; p.textContent = j.prompt;
       div.append(head, p);
@@ -552,8 +553,16 @@
         dl.appendChild(a);
         div.append(v, dl);
       }
+      if (j.status === "waiting") {
+        const w = document.createElement("p"); w.className = "hint";
+        w.textContent = "In line — the studio engine renders in sessions. Your clip starts automatically when the engine is on.";
+        div.appendChild(w);
+      }
       if (j.status === "error" && j.error) {
-        const e = document.createElement("p"); e.className = "form-error"; e.textContent = j.error;
+        const e = document.createElement("p"); e.className = "form-error";
+        e.textContent = engineOffline
+          ? "The engine went offline before this clip rendered. Tap Generate to try again — free clips are never charged."
+          : j.error;
         div.appendChild(e);
       }
       box.appendChild(div);
@@ -716,7 +725,7 @@
   function startPolling() {
     if (pollTimer) return;
     pollTimer = setInterval(async function () {
-      const pending = jobsCache.filter((j) => j.status === "queued" || j.status === "running");
+      const pending = jobsCache.filter((j) => j.status === "queued" || j.status === "running" || j.status === "waiting");
       for (const j of pending) {
         try { await callFn("bd-status", { job_id: j.id }); } catch (e) { /* keep polling */ }
       }
