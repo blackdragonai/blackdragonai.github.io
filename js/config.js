@@ -26,7 +26,7 @@ window.BD_CONFIG = {
     },
     {
       id: "comfy-i2v",
-      hidden: true, // SHIP GATE: flips off at the engine session, once bd-generate/bd-status are deployed + I2V is live-tested
+      hidden: false, // LIVE 2026-11-04 — backend deployed + engine photo test passed (bd-i2v-test-studio.mp4)
       name: "Black Dragon FREE — Image to Video",
       zone: "BETA — FREE",
       blurb: "Open-source Wan 2.2 image-to-video on our own engine. Sora-style: start from your photo and tell it how to move.",
