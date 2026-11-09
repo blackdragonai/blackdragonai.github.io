@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EDENX AI — Be The Star</title>
+<meta name="description" content="EDENX AI — one selfie becomes your Alter Ego, then you star in AI movie clips. A Global Vizion Enterprise creation.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#070708">
+<style>
+  :root{--bg:#070708;--panel:#101013;--panel2:#16161b;--line:#26262e;--txt:#f2efe9;--mut:#9a97a3;--gold:#d8a94e;--gold2:#f0cd7e;--red:#c33;--ok:#3ecf6e;--wait:#e0a83c}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);font-family:Georgia,'Times New Roman',serif;min-height:100vh}
+  a{color:var(--gold2)}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,7,8,.92);backdrop-filter:blur(8px);z-index:10}
+  .brand{font-size:26px;letter-spacing:4px;font-weight:bold}
+  .brand span{color:var(--gold)}
+  .brand small{display:block;font-size:10px;letter-spacing:3px;color:var(--mut);font-family:Arial,sans-serif}
+  button{font-family:Arial,sans-serif;cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--txt);padding:10px 16px;border-radius:8px;font-size:14px}
+  button.gold{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#191203;border:none;font-weight:bold}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  button.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset}
+  .hero{text-align:center;padding:64px 20px 30px;background:radial-gradient(ellipse at 50% -10%,#2a2113 0%,var(--bg) 60%)}
+  .hero h1{font-size:clamp(38px,7vw,64px);letter-spacing:2px;line-height:1.05}
+  .hero h1 em{color:var(--gold);font-style:normal}
+  .hero p{color:var(--mut);font-family:Arial,sans-serif;font-size:16px;max-width:640px;margin:16px auto 0;line-height:1.55}
+  main{max-width:1060px;margin:0 auto;padding:10px 18px 70px}
+  .step{margin-top:44px}
+  .step h2{font-size:24px;letter-spacing:1px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .step h2 b{color:var(--gold);font-family:Arial,sans-serif;font-size:14px;letter-spacing:3px;display:block;margin-bottom:4px}
+  .step .sub{color:var(--mut);font-family:Arial,sans-serif;font-size:14px;margin-top:10px;line-height:1.5}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:18px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left;width:100%}
+  .card h3{font-size:18px;margin-bottom:6px}
+  .card p{color:var(--mut);font-family:Arial,sans-serif;font-size:13px;line-height:1.5}
+  .card .tag{display:inline-block;font-family:Arial,sans-serif;font-size:10px;letter-spacing:2px;color:var(--gold2);border:1px solid var(--gold);border-radius:20px;padding:2px 9px;margin-bottom:9px}
+  .card.sel{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold)}
+  .drop{margin-top:18px;border:2px dashed var(--line);border-radius:12px;padding:30px;text-align:center;font-family:Arial,sans-serif;color:var(--mut)}
+  .drop img{max-width:230px;border-radius:10px;margin-top:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+  .note{font-family:Arial,sans-serif;font-size:13px;color:var(--mut)}
+  .badge{font-family:Arial,sans-serif;font-size:11px;letter-spacing:1px;padding:3px 10px;border-radius:20px;border:1px solid var(--line)}
+  .badge.done{color:var(--ok);border-color:var(--ok)}
+  .badge.wait{color:var(--wait);border-color:var(--wait)}
+  .badge.run{color:var(--gold2);border-color:var(--gold)}
+  .badge.fail{color:var(--red);border-color:var(--red)}
+  .movie{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:14px}
+  .movie video{width:100%;border-radius:8px;background:#000}
+  .movie img.still{width:100%;border-radius:8px}
+  .movie .meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px;gap:10px;flex-wrap:wrap}
+  .movie .meta p{font-family:Arial,sans-serif;font-size:13px;color:var(--mut)}
+  #authbox{font-family:Arial,sans-serif;font-size:13px;color:var(--mut);display:flex;gap:10px;align-items:center}
+  .hidden{display:none!important}
+  footer{border-top:1px solid var(--line);padding:26px 20px;text-align:center;color:var(--mut);font-family:Arial,sans-serif;font-size:12px;line-height:1.7}
+  input[type=email],input[type=password]{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:10px;border-radius:8px;font-size:14px;width:230px}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--gold);color:var(--txt);padding:12px 20px;border-radius:10px;font-family:Arial,sans-serif;font-size:14px;z-index:50;max-width:90vw;text-align:center}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">EDEN<span>X</span> AI<small>BE THE STAR · GLOBAL VIZION ENTERPRISE</small></div>
+  <div id="authbox">
+    <span id="whoami"></span>
+    <button id="btn-signin">Sign in</button>
+    <button id="btn-signout" class="hidden">Sign out</button>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>ONE SELFIE.<br><em>ANY MOVIE.</em></h1>
+  <p>Upload one photo and EDENX builds your <b>Alter Ego</b> — then drops you into the movie.
+     Superhero landings, western showdowns, haunted chapels, championship walkouts. You are the lead now.</p>
+</div>
+
+<main>
+  <!-- STEP 1 -->
+  <section class="step" id="step-ego">
+    <h2><b>STEP 1</b>Create Your Alter Ego</h2>
+    <p class="sub">One clear photo of your face. Pick a style — the engine restyles the photo into your
+       character. Your face stays your face.</p>
+    <div class="drop" id="drop">
+      <div>Drop your photo here, or</div>
+      <div class="row" style="justify-content:center">
+        <input type="file" id="file" accept="image/*" class="hidden">
+        <button id="btn-pick">Choose photo</button>
+      </div>
+      <img id="preview" class="hidden" alt="Your photo">
+      <div class="note" id="filename"></div>
+    </div>
+    <div class="grid" id="styles"></div>
+    <div class="row">
+      <button class="gold" id="btn-ego" disabled>Create my Alter Ego</button>
+      <span class="note" id="ego-note">Sign in, add a photo and pick a style.</span>
+    </div>
+    <div class="grid" id="my-egos"></div>
+  </section>
+
+  <!-- STEP 2 -->
+  <section class="step" id="step-ride">
+    <h2><b>STEP 2</b>Pick Your Ride</h2>
+    <p class="sub">Pre-scripted movie scenes, directed and lit. Pick one — your Alter Ego plays the lead.</p>
+    <div class="grid" id="rides"></div>
+  </section>
+
+  <!-- STEP 3 -->
+  <section class="step" id="step-gen">
+    <h2><b>STEP 3</b>Roll Cameras</h2>
+    <p class="sub">Your Alter Ego becomes the opening frame; the engine shoots the scene around you.</p>
+    <div class="row">
+      <span class="note">Length:</span>
+      <span id="durations"></span>
+    </div>
+    <div class="row">
+      <button class="gold" id="btn-gen" disabled>Generate my movie</button>
+      <span class="note" id="gen-note">Pick an Alter Ego and a ride.</span>
+    </div>
+  </section>
+
+  <!-- MOVIES -->
+  <section class="step" id="step-movies">
+    <h2><b>YOUR MOVIES</b>The Reel</h2>
+    <div id="movies"><p class="note" style="margin-top:14px">Nothing here yet — your first scene is waiting above.</p></div>
+  </section>
+</main>
+
+<footer>
+  EDENX AI — a GLOBAL VIZION ENTERPRISE creation.<br>
+  Free engine lane: when the studio engine is resting, generations wait IN LINE and run in order when it wakes. Nothing is ever charged without your say.<br>
+  Share your finished scenes on <a href="https://viralx-app.github.io/">VIRALX</a> — GO VIRAL. GET PAID.
+</footer>
+
+<div id="toast" class="hidden"></div>
+
+<div id="auth-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:60">
+  <div style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:26px;width:min(92vw,360px)">
+    <h3 style="margin-bottom:14px">Sign in to EDENX</h3>
+    <div style="display:grid;gap:10px">
+      <input type="email" id="auth-email" placeholder="Email">
+      <input type="password" id="auth-pass" placeholder="Password">
+      <button class="gold" id="auth-go">Sign in / Create account</button>
+      <button id="auth-cancel">Cancel</button>
+      <span class="note" id="auth-note"></span>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+<script>if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}</script>
+</body>
+</html>
