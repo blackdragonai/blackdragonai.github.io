@@ -54,6 +54,17 @@
   .chat-msg.user{align-self:flex-end;background:#26262b;border:none;color:#f5f5f4}
   .chat-msg.assistant{align-self:flex-start;background:#17171a;border:none;color:#e8e8ee}
   .chat-msg.system{align-self:center;background:#3f3003;border:1px solid #d4af37;color:#f5d76e;text-align:center;max-width:100%}
+  .cinema-toggle-row{display:flex;gap:8px;align-items:center;margin:12px 0 4px;flex-wrap:wrap}
+  #cinema-toggle.on{border-color:#d4af37;color:#f5d76e}
+  .cinema-panel{margin:8px 0 4px;border:1px solid #2b2b30;border-radius:16px;padding:12px;background:#101012}
+  .cinema-row{margin-bottom:10px}
+  .cinema-row:last-child{margin-bottom:2px}
+  .cinema-row-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:#a1a1aa;text-transform:uppercase;margin-bottom:6px}
+  .cinema-rail{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+  .cinema-chip{flex:0 0 auto;background:#17171a;border:1px solid #2b2b30;color:#e4e4e7;border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+  .cinema-chip.selected{border-color:#d4af37;color:#f5d76e;background:#241d05}
+  .cinema-preview{font-size:13px;color:#a1a1aa;background:#17171a;border-radius:12px;padding:9px 12px;margin:8px 0 2px;word-break:break-word}
+  .cinema-note{font-size:12.5px;color:#a1a1aa;margin:6px 0 0}
   .chat-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
   .chat-controls .chat-model-wrap{flex:0 1 220px}
   .chat-controls .chat-input-wrap{flex:1 1 260px}
@@ -135,6 +146,15 @@
     <div class="card composer-card">
       <label for="prompt">Describe the clip</label>
       <textarea id="prompt" rows="4" placeholder="Subject, action, environment, lighting, camera move. Example: Slow push-in on a chrome dragon statue in a smoke-filled studio, cinematic light, embers in the air"></textarea>
+      <div class="cinema-toggle-row">
+        <button id="cinema-toggle" type="button" class="btn btn-ghost btn-small">🎬 Cinema Studio</button>
+        <span class="muted" id="cinema-state">Off — plain prompt</span>
+      </div>
+      <div id="cinema-panel" class="cinema-panel" hidden>
+        <div id="cinema-rows"></div>
+        <p class="cinema-preview" id="cinema-preview" hidden></p>
+        <p class="cinema-note">Your picks compile into the prompt — the preview shows exactly what renders, nothing hidden. They steer the camera look rather than guarantee it; on photo-led clips a strong move can warp the subject, so ease in. Cinema controls inspired by the MIT-licensed Open-Higgsfield-AI project.</p>
+      </div>
       <div class="row">
         <div>
           <label for="duration">Length</label>

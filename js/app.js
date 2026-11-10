@@ -334,6 +334,196 @@
   });
   fillOptions();
 
+  // ---------- cinema studio (Phase 1: client-side prompt compiler) ----------
+  // Structured camera controls that compile into the prompt text sent to
+  // bd-generate — no new backend, no paid calls (CINEMA-STUDIO-SPEC.md).
+  // Rows 1-4 adopt the Open-Higgsfield-AI taxonomy (MIT; fragments are
+  // functional prompt vocabulary); shot + move rows are ours. Every row
+  // defaults to Off: Cinema is opt-in and never silently rewrites a
+  // plain prompt.
+  const CINEMA_ROWS = [
+    { key: "shot", label: "Shot size / angle", options: [
+      ["Extreme Wide", "extreme wide establishing shot"],
+      ["Wide", "wide shot"],
+      ["Medium", "medium shot"],
+      ["Close-Up", "close-up shot"],
+      ["Extreme Close-Up", "extreme close-up shot"],
+      ["Over-the-Shoulder", "over-the-shoulder shot"],
+      ["POV", "first-person POV shot"],
+      ["Aerial Drone", "aerial drone shot"],
+      ["Low-Angle Hero", "low-angle hero shot"],
+      ["Dutch Angle", "dutch angle shot"]
+    ] },
+    { key: "camera", label: "Camera body", options: [
+      ["8K Digital Cinema", "modular 8K digital cinema camera"],
+      ["Full-Frame Cine", "full-frame digital cinema camera"],
+      ["70mm Film", "grand format 70mm film camera"],
+      ["Super 35 Studio", "Super 35 studio digital camera"],
+      ["16mm Film", "classic 16mm film camera"],
+      ["Large Format Digital", "premium large-format digital cinema camera"]
+    ] },
+    { key: "lens", label: "Lens", options: [
+      ["Creative Tilt", "creative tilt lens effect"],
+      ["Compact Anamorphic", "compact anamorphic lens"],
+      ["Extreme Macro", "extreme macro lens"],
+      ["70s Cinema Prime", "1970s cinema prime lens"],
+      ["Classic Anamorphic", "classic anamorphic lens"],
+      ["Premium Modern Prime", "premium modern prime lens"],
+      ["Warm Cinema Prime", "warm-toned cinema prime lens"],
+      ["Swirl Bokeh Portrait", "swirl bokeh portrait lens"],
+      ["Vintage Prime", "vintage prime lens"],
+      ["Halation Diffusion", "halation diffusion filter"],
+      ["Clinical Sharp Prime", "ultra-sharp clinical prime lens"]
+    ] },
+    { key: "focal", label: "Focal length", options: [
+      ["8mm", "8", "ultra-wide perspective"],
+      ["14mm", "14", "wide-angle perspective"],
+      ["24mm", "24", "wide-angle dynamic perspective"],
+      ["35mm", "35", "natural cinematic perspective"],
+      ["50mm", "50", "standard portrait perspective"],
+      ["85mm", "85", "classic portrait perspective"]
+    ] },
+    { key: "aperture", label: "Aperture", options: [
+      ["f/1.4", "1.4", "shallow depth of field, creamy bokeh"],
+      ["f/4", "4", "balanced depth of field"],
+      ["f/11", "11", "deep focus clarity, sharp foreground to background"]
+    ] },
+    { key: "move", label: "Camera move", options: [
+      ["Static Lock-Off", "static locked-off camera"],
+      ["Push-In", "slow cinematic dolly push-in"],
+      ["Pull-Out", "slow cinematic dolly pull-out"],
+      ["Pan", "smooth camera pan"],
+      ["Tilt", "smooth camera tilt"],
+      ["Crane Up", "smooth crane-up reveal"],
+      ["Orbit", "orbiting camera move"],
+      ["Tracking / Follow", "tracking shot following the subject"],
+      ["FPV Fly-Through", "FPV fly-through"],
+      ["Handheld", "subtle handheld camera sway"],
+      ["Crash Zoom", "fast crash zoom in"]
+    ] }
+  ];
+  const cinema = { on: false, sel: { shot: null, camera: null, lens: null, focal: null, aperture: null, move: null } };
+  function cinemaOpt(key) {
+    const idx = cinema.sel[key];
+    if (idx == null) return null;
+    const row = CINEMA_ROWS.find(function (r) { return r.key === key; });
+    return row ? row.options[idx] || null : null;
+  }
+  function compileCinemaPrompt(raw) {
+    if (!cinema.on) return raw;
+    const shot = cinemaOpt("shot"), cam = cinemaOpt("camera"), lens = cinemaOpt("lens"),
+      foc = cinemaOpt("focal"), ap = cinemaOpt("aperture"), mv = cinemaOpt("move");
+    if (!shot && !cam && !lens && !foc && !ap && !mv) return raw;
+    let head = raw;
+    if (shot) head = shot[1] + " of " + raw;
+    const parts = [];
+    if (cam) parts.push("shot on a " + cam[1]);
+    if (lens && foc) parts.push("using a " + lens[1] + " at " + foc[1] + "mm (" + foc[2] + ")");
+    else if (lens) parts.push("using a " + lens[1]);
+    else if (foc) parts.push("shot at " + foc[1] + "mm (" + foc[2] + ")");
+    if (ap) parts.push("aperture f/" + ap[1] + ", " + ap[2]);
+    if (mv) parts.push(mv[1]);
+    parts.push("cinematic lighting, high dynamic range");
+    return head + ", " + parts.join(", ");
+  }
+  function cinemaLabel() {
+    const names = [];
+    ["camera", "lens", "focal", "aperture", "shot", "move"].forEach(function (k) {
+      const o = cinemaOpt(k);
+      if (o) names.push(o[0]);
+    });
+    return names.length ? "🎬 Cinema: " + names.join(" · ") : "";
+  }
+  function saveCinemaState() {
+    try { localStorage.setItem("bd_cinema_state_v1", JSON.stringify(cinema)); } catch (e) { /* private mode */ }
+  }
+  function loadCinemaState() {
+    try {
+      const s = JSON.parse(localStorage.getItem("bd_cinema_state_v1") || "null");
+      if (s && s.sel) {
+        cinema.on = !!s.on;
+        Object.keys(cinema.sel).forEach(function (k) {
+          if (typeof s.sel[k] === "number") cinema.sel[k] = s.sel[k];
+        });
+      }
+    } catch (e) { /* start fresh */ }
+  }
+  // The compiled prompt text is what the server stores on the job, so a
+  // device-local map from compiled prompt -> selection label lets
+  // History badge Cinema jobs without any backend change.
+  function rememberCinemaJob(compiled, label) {
+    try {
+      const arr = JSON.parse(localStorage.getItem("bd_cinema_jobs_v1") || "[]");
+      arr.push({ p: compiled, l: label });
+      while (arr.length > 60) arr.shift();
+      localStorage.setItem("bd_cinema_jobs_v1", JSON.stringify(arr));
+    } catch (e) { /* private mode */ }
+  }
+  function cinemaJobLabel(promptText) {
+    try {
+      const arr = JSON.parse(localStorage.getItem("bd_cinema_jobs_v1") || "[]");
+      for (let i = arr.length - 1; i >= 0; i--) if (arr[i].p === promptText) return arr[i].l;
+    } catch (e) { /* no store */ }
+    return "";
+  }
+  const cinemaPanel = document.getElementById("cinema-panel");
+  const cinemaRowsBox = document.getElementById("cinema-rows");
+  const cinemaPreview = document.getElementById("cinema-preview");
+  const cinemaToggle = document.getElementById("cinema-toggle");
+  const cinemaStateEl = document.getElementById("cinema-state");
+  CINEMA_ROWS.forEach(function (row) {
+    const wrap = document.createElement("div"); wrap.className = "cinema-row";
+    const lab = document.createElement("div"); lab.className = "cinema-row-label"; lab.textContent = row.label;
+    const rail = document.createElement("div"); rail.className = "cinema-rail";
+    const mkChip = function (text, idx) {
+      const c = document.createElement("button");
+      c.type = "button"; c.className = "cinema-chip"; c.textContent = text;
+      c.dataset.row = row.key; c.dataset.idx = idx == null ? "" : String(idx);
+      c.addEventListener("click", function () {
+        cinema.sel[row.key] = idx;
+        saveCinemaState();
+        renderCinema();
+      });
+      return c;
+    };
+    rail.appendChild(mkChip("Off", null));
+    row.options.forEach(function (opt, i) { rail.appendChild(mkChip(opt[0], i)); });
+    wrap.append(lab, rail);
+    cinemaRowsBox.appendChild(wrap);
+  });
+  function updateCinemaPreview() {
+    const raw = document.getElementById("prompt").value.trim();
+    const compiled = raw ? compileCinemaPrompt(raw) : raw;
+    if (!cinema.on || !raw || compiled === raw) {
+      cinemaPreview.hidden = true;
+      cinemaPreview.textContent = "";
+      return;
+    }
+    cinemaPreview.hidden = false;
+    cinemaPreview.textContent = "Will send: " + compiled;
+  }
+  function renderCinema() {
+    cinemaPanel.hidden = !cinema.on;
+    cinemaToggle.classList.toggle("on", cinema.on);
+    cinemaStateEl.textContent = cinema.on
+      ? (cinemaLabel().replace("🎬 Cinema: ", "") || "On — pick your camera setup")
+      : "Off — plain prompt";
+    cinemaRowsBox.querySelectorAll(".cinema-chip").forEach(function (c) {
+      const cur = cinema.sel[c.dataset.row];
+      const mine = c.dataset.idx === "" ? null : parseInt(c.dataset.idx, 10);
+      c.classList.toggle("selected", cur === mine);
+    });
+    updateCinemaPreview();
+  }
+  cinemaToggle.addEventListener("click", function () {
+    cinema.on = !cinema.on;
+    saveCinemaState();
+    renderCinema();
+  });
+  document.getElementById("prompt").addEventListener("input", updateCinemaPreview);
+  loadCinemaState();
+  renderCinema();
+
   // ---------- auth ----------
   const authToggle = document.getElementById("auth-toggle");
   authToggle.addEventListener("click", function () {
@@ -446,12 +636,16 @@
       err.textContent = "Image to Video needs a photo first — upload one above.";
       return;
     }
+    // Cinema Studio: the compiled prompt is what bd-generate receives
+    // (and what lands on the job record); the raw prompt stays in the box.
+    const sendPrompt = compileCinemaPrompt(prompt);
+    const cineLabel = sendPrompt !== prompt ? cinemaLabel() : "";
     const btn = this;
     btn.disabled = true; btn.textContent = "Sending...";
     try {
       const out = await callFn("bd-generate", {
         model: selectedModel.id,
-        prompt: prompt,
+        prompt: sendPrompt,
         duration: parseInt(document.getElementById("duration").value, 10),
         resolution: document.getElementById("resolution").value,
         aspect_ratio: document.getElementById("aspect").value,
@@ -459,8 +653,10 @@
       });
       if (profile && typeof out.balance === "number") profile.credits = out.balance;
       if (profile && typeof out.free_left === "number") profile.free_gens_used = Math.max(0, freePerWeek - out.free_left);
+      if (cineLabel) rememberCinemaJob(sendPrompt, cineLabel);
       renderBalances();
       document.getElementById("prompt").value = "";
+      updateCinemaPreview();
       updateCost();
       await loadJobs();
     } catch (ex) {
@@ -544,6 +740,11 @@
       head.append(left, st);
       const p = document.createElement("p"); p.className = "prompt"; p.textContent = j.prompt;
       div.append(head, p);
+      const cine = cinemaJobLabel(j.prompt);
+      if (cine) {
+        const cp = document.createElement("p"); cp.className = "hint"; cp.textContent = cine;
+        div.appendChild(cp);
+      }
       if (j.status === "done" && j.video_url) {
         const v = document.createElement("video");
         v.src = j.video_url; v.controls = true; v.playsInline = true;
