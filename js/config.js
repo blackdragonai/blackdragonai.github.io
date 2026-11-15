@@ -10,8 +10,8 @@ window.BD_CONFIG = {
       id: "comfy",
       name: "Black Dragon FREE",
       zone: "BETA — FREE",
-      blurb: "Open-source Wan 2.2 text-to-video on our own engine. FREE 7 days at a time — reopens every 30 days. One free window per connection.",
-      priceNote: "FREE in your 7-day window — reopens every 30 days",
+      blurb: "Open-source Wan 2.2 text-to-video on our own engine. FREE BETA until Feb 28, 2027 — unlimited generations, no paywalls.",
+      priceNote: "FREE BETA — unlimited until Feb 28, 2027",
       durations: [5, 10, 15],
       resolutions: ["720p"]
     },
@@ -19,8 +19,8 @@ window.BD_CONFIG = {
       id: "comfy-ltx",
       name: "LTX-2.5 FREE — ComfyUI",
       zone: "BETA — FREE",
-      blurb: "Open-source LTX-2.5 text-to-video on our own engine. Video with the sound built in — and one prompt can carry a whole multi-shot story. FREE 7 days at a time — reopens every 30 days. One free window per connection.",
-      priceNote: "FREE in your 7-day window — reopens every 30 days",
+      blurb: "Open-source LTX-2.5 text-to-video on our own engine. Video with the sound built in — and one prompt can carry a whole multi-shot story. FREE BETA until Feb 28, 2027 — unlimited generations, no paywalls.",
+      priceNote: "FREE BETA — unlimited until Feb 28, 2027",
       durations: [5, 10, 15],
       resolutions: ["720p"]
     },
@@ -30,29 +30,9 @@ window.BD_CONFIG = {
       name: "Black Dragon FREE — Image to Video",
       zone: "BETA — FREE",
       blurb: "Open-source Wan 2.2 image-to-video on our own engine. Sora-style: start from your photo and tell it how to move.",
-      priceNote: "FREE in your 7-day window — reopens every 30 days",
+      priceNote: "FREE BETA — unlimited until Feb 28, 2027",
       durations: [5, 10, 15],
       resolutions: ["720p"]
-    },
-    {
-      id: "wan",
-      name: "Wan 3.0",
-      zone: "CHEAP ZONE",
-      blurb: "Fast, low-cost clips. The workhorse - start here.",
-      priceNote: "Low per-second rate - cheapest zone",
-      durations: [5, 10, 15],
-      resolutions: ["720p", "1080p"],
-      hidden: true
-    },
-    {
-      id: "seedance",
-      name: "Seedance 2.5",
-      zone: "PREMIUM ZONE",
-      blurb: "ByteDance's cinematic model. Up to 30 seconds, native audio, reference images/video/audio.",
-      priceNote: "Premium rate - credits per second",
-      durations: [5, 10, 15, 30],
-      resolutions: ["480p", "720p"],
-      hidden: true
     },
     {
       id: "music",
