@@ -17,6 +17,9 @@
   let authMode = "in"; // "in" | "up"
   const isOwner = () => !!session && session.user.email === cfg.OWNER_EMAIL;
   const esc = (s) => String(s == null ? "" : s);
+  // FREE BETA UNTIL FEB 28 2027 (Keyz, 2026-11-15): no paywalls, no
+  // 7-day window - the whole studio is free until this date flips.
+  const FREE_BETA = Date.now() < Date.UTC(2027, 2, 1, 5, 0, 0);
 
   // ---------- pricing ----------
   function perSec(modelId, res) {
@@ -39,9 +42,11 @@
     if (!data) return;
     pricing = data;
     freePerWeek = pricing.free_gens_per_week != null ? pricing.free_gens_per_week : 0;
-    document.getElementById("auth-rates").textContent =
+    document.getElementById("auth-rates").textContent = FREE_BETA ?
+      "FREE BETA until Feb 28, 2027 — unlimited free generations, no paywalls · Wan " + pricing.wan_720_per_sec + " credits/sec after beta" :
       "Unlimited free generations in your 7-day window · reopens every 30 days · Credit packs $50 / $150 / $200 · Wan " + pricing.wan_720_per_sec + " credits/sec";
-    document.getElementById("free-allowance-note").textContent =
+    document.getElementById("free-allowance-note").textContent = FREE_BETA ?
+      "FREE BETA — unlimited free generations until Feb 28, 2027 (free engine, up to 15 sec each)" :
       "Unlimited free generations in your 7-day window — reopens every 30 days (free engine, up to " + (pricing.free_max_seconds || 10) + " sec each)";
     document.querySelectorAll(".model-price").forEach(function (el) {
       const id = el.dataset.model;
@@ -68,7 +73,8 @@
   }
   function renderPublic() {
     if (!pricing) return;
-    document.getElementById("pub-free-note").textContent =
+    document.getElementById("pub-free-note").textContent = FREE_BETA ?
+      "FREE BETA — unlimited free generations until Feb 28, 2027. No paywalls." :
       "Unlimited free generations in a 7-day free trial";
     const mk = function (name, big, sub) {
       const div = document.createElement("div");
@@ -84,13 +90,18 @@
     };
     const pg = document.getElementById("pub-plan-grid");
     pg.innerHTML = "";
-    pg.appendChild(mk("FREE TRIAL", "Unlimited gens · 7 days", "$0 · Cheap Zone clips"));
-    (pricing.plans || []).forEach(function (p) {
-      pg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " / month"));
-    });
+    if (FREE_BETA) {
+      pg.appendChild(mk("FREE BETA", "Unlimited gens · until Feb 28, 2027", "$0 · everything free · no paywalls"));
+      const ph = document.getElementById("pub-packs-h"); if (ph) ph.classList.add("hidden");
+    } else {
+      pg.appendChild(mk("FREE TRIAL", "Unlimited gens · 7 days", "$0 · Cheap Zone clips"));
+      (pricing.plans || []).forEach(function (p) {
+        pg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " / month"));
+      });
+    }
     const kg = document.getElementById("pub-pack-grid");
     kg.innerHTML = "";
-    (pricing.packs || []).forEach(function (p) {
+    if (!FREE_BETA) (pricing.packs || []).forEach(function (p) {
       kg.appendChild(mk(esc(p.name).toUpperCase(), p.credits + " credits", "$" + p.usd + " one-time"));
     });
   }
@@ -98,6 +109,7 @@
     // Mirrors the server rule: free runs 7 days at a time on a 30-day
     // cycle from signup. No weekly reset - the counter resets only when
     // a new 30-day cycle begins.
+    if (FREE_BETA) return { open: true, used: 0 }; // beta: the window is deleted until Feb 28 2027
     if (!profile || !profile.trial_ends_at) return { open: true, used: profile ? (profile.free_gens_used || 0) : 0 };
     const DAY = 24 * 3600 * 1000;
     const start = Date.parse(profile.trial_ends_at) - 7 * DAY;
@@ -119,12 +131,12 @@
     if (!pricing) return false;
     const d = parseInt(document.getElementById("duration").value || "0", 10);
     const r = document.getElementById("resolution").value;
-    return selectedModel.id === "wan" && r === "720p" && d > 0 && d <= (pricing.free_max_seconds || 10);
+    return selectedModel.id === "wan" && r === "720p" && d > 0 && d <= (FREE_BETA ? 15 : (pricing.free_max_seconds || 10));
   }
   function renderBalances() {
     if (!session) return;
     balanceChip.textContent = "⚡ " + (profile ? profile.credits : 0) + " credits";
-    freeChip.textContent = trialOver() ? "🎁 trial over" : "🎁 unlimited free in window";
+    freeChip.textContent = FREE_BETA ? "🎁 FREE BETA · unlimited free" : (trialOver() ? "🎁 trial over" : "🎁 unlimited free in window");
     if (profile) {
       const planName = profile.plan && profile.plan !== "free"
         ? profile.plan.charAt(0).toUpperCase() + profile.plan.slice(1) + " (monthly)"
@@ -141,11 +153,12 @@
     const free = document.createElement("div");
     free.className = "pack-card";
     free.innerHTML = "";
-    const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = "FREE TRIAL";
-    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = "Unlimited gens · 7 days";
-    const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = "$0 · free engine · reopens every 30 days";
+    const fn = document.createElement("div"); fn.className = "pack-name"; fn.textContent = FREE_BETA ? "FREE BETA" : "FREE TRIAL";
+    const fc = document.createElement("div"); fc.className = "pack-credits"; fc.textContent = FREE_BETA ? "Unlimited gens · until Feb 28, 2027" : "Unlimited gens · 7 days";
+    const fu = document.createElement("div"); fu.className = "pack-usd"; fu.textContent = FREE_BETA ? "$0 · free engine · no paywalls" : "$0 · free engine · reopens every 30 days";
     free.append(fn, fc, fu);
     grid.appendChild(free);
+    if (FREE_BETA) return;
     (pricing.plans || []).forEach(function (p) {
       const div = document.createElement("div");
       div.className = "pack-card";
@@ -162,6 +175,7 @@
   function renderPacks() {
     const grid = document.getElementById("pack-grid");
     grid.innerHTML = "";
+    if (FREE_BETA) { const ph = document.getElementById("packs-h"); if (ph) ph.classList.add("hidden"); return; } // packs are deleted during the free beta
     (pricing.packs || []).forEach(function (p) {
       const div = document.createElement("div");
       div.className = "pack-card";
@@ -573,7 +587,7 @@
     document.getElementById("showcase").classList.toggle("hidden", inOk);
     studio.classList.toggle("hidden", !inOk);
     signoutBtn.classList.toggle("hidden", !inOk);
-    buyBtn.classList.toggle("hidden", !inOk);
+    buyBtn.classList.toggle("hidden", FREE_BETA || !inOk);
     balanceChip.classList.toggle("hidden", !inOk);
     freeChip.classList.toggle("hidden", !inOk);
     document.getElementById("owner-panel").classList.toggle("hidden", !isOwner());
